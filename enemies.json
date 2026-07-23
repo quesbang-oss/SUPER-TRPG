@@ -1,0 +1,128 @@
+{
+  "slime": {
+    "name": "スライム",
+    "baseHp": 30,
+    "baseAttack": 5,
+    "baseDefense": 1,
+    "baseExp": 10,
+    "gold": 5,
+    "desc": "ぷるぷるした魔物。"
+  },
+  "shadow": {
+    "name": "黒い影",
+    "baseHp": 50,
+    "baseAttack": 8,
+    "baseDefense": 3,
+    "baseExp": 25,
+    "gold": 12,
+    "desc": "不気味な影。"
+  },
+  "goblin": {
+    "name": "ゴブリン",
+    "baseHp": 80,
+    "baseAttack": 12,
+    "baseDefense": 5,
+    "baseExp": 40,
+    "gold": 20,
+    "desc": "小さく素早い魔物。"
+  },
+  "wolf": {
+    "name": "灰色狼",
+    "baseHp": 100,
+    "baseAttack": 16,
+    "baseDefense": 6,
+    "baseExp": 55,
+    "gold": 30,
+    "desc": "群れで狩る獣。"
+  },
+  "orc": {
+    "name": "オーク",
+    "baseHp": 180,
+    "baseAttack": 22,
+    "baseDefense": 12,
+    "baseExp": 90,
+    "gold": 55,
+    "desc": "強靭な肉体を持つ魔物。"
+  },
+  "skeleton": {
+    "name": "スケルトン",
+    "baseHp": 120,
+    "baseAttack": 18,
+    "baseDefense": 8,
+    "baseExp": 70,
+    "gold": 40,
+    "desc": "骨だけの戦士。"
+  },
+  "vampire": {
+    "name": "ヴァンパイア",
+    "baseHp": 260,
+    "baseAttack": 30,
+    "baseDefense": 15,
+    "baseExp": 160,
+    "gold": 100,
+    "desc": "血を吸う夜の怪物。"
+  },
+  "golem": {
+    "name": "ストーンゴーレム",
+    "baseHp": 500,
+    "baseAttack": 35,
+    "baseDefense": 30,
+    "baseExp": 300,
+    "gold": 180,
+    "desc": "巨大な石の守護者。"
+  },
+  "wyvern": {
+    "name": "ワイバーン",
+    "baseHp": 700,
+    "baseAttack": 45,
+    "baseDefense": 24,
+    "baseExp": 450,
+    "gold": 300,
+    "desc": "空を舞う竜種。"
+  },
+  "demon": {
+    "name": "上級悪魔",
+    "baseHp": 900,
+    "baseAttack": 60,
+    "baseDefense": 40,
+    "baseExp": 700,
+    "gold": 500,
+    "desc": "強大な魔力を持つ悪魔。"
+  },
+  "dragon": {
+    "name": "炎竜",
+    "baseHp": 1500,
+    "baseAttack": 80,
+    "baseDefense": 55,
+    "baseExp": 1500,
+    "gold": 1200,
+    "desc": "炎を操る巨大な竜。"
+  },
+  "lich": {
+    "name": "リッチ",
+    "baseHp": 2200,
+    "baseAttack": 110,
+    "baseDefense": 70,
+    "baseExp": 2500,
+    "gold": 2500,
+    "desc": "死を超越した魔術師。"
+  },
+  "kraken": {
+    "name": "クラーケン",
+    "baseHp": 3500,
+    "baseAttack": 150,
+    "baseDefense": 90,
+    "baseExp": 4500,
+    "gold": 5000,
+    "desc": "海を支配する怪物。"
+  },
+  "void_beast": {
+    "name": "虚無獣",
+    "baseHp": 6000,
+    "baseAttack": 220,
+    "baseDefense": 130,
+    "baseExp": 9000,
+    "gold": 10000,
+    "desc": "世界の外側から来た怪物。"
+  }
+}

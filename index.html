@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>境界TRPG Ultimate</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header><h1>境界TRPG</h1><p>Ultimate Standalone Edition</p></header>
+<section id="status" class="panel"></section>
+<section id="output" class="panel output"></section>
+<section class="command-area">
+<div id="suggestions" class="suggestions hidden"></div>
+<form id="command-form">
+<input id="command-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="/help">
+<button type="submit">実行</button>
+</form>
+<small>「/」で候補　↑↓選択　Tab補完　Enter実行</small>
+</section>
+</div>
+<script src="js/app.js"></script>
+</body>
+</html>
