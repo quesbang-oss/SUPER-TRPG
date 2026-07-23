@@ -197,7 +197,29 @@ function enemyInfo(id,lv){if(!id)return usage("/enemy_info");if(!ENEMIES[id])ret
 function battleStart(id,lv){if(!id)return usage("/battle_start");if(!ENEMIES[id])return log(`敵ID「${id}」がありません。\n/enemy_list で確認してください。`,"error");if(!save.character)return usage("/char_create","先にキャラクターを作成してください。");const e=enemyStats(id,lv||1);save.battle={enemy:e,returnState:{hp:save.character.hp,mp:save.character.mp}};persist();log(`⚔ ${e.name} Lv.${e.level} が現れた！\nHP ${e.hp} / 攻撃 ${e.attack} / 防御 ${e.defense}`);battleStatus()}
 function battleStatus(){if(!save.battle)return usage("/battle_start","戦闘中ではありません。");const e=save.battle.enemy,c=save.character;log(`敵: ${e.name} Lv.${e.level} HP ${e.hp}/${e.maxHp}\nあなた: ${c.name} HP ${c.hp}/${c.maxHp} MP ${c.mp}/${c.maxMp}`)}
 function gainExp(n){const c=save.character;c.exp+=n;log(`EXP +${n} (${c.exp}/${c.nextExp})`);while(c.exp>=c.nextExp){c.exp-=c.nextExp;c.level++;c.nextExp=Math.floor(c.nextExp*1.35);c.maxHp+=20;c.hp=c.maxHp;c.maxMp+=10;c.mp=c.maxMp;c.str+=2;c.dex+=2;c.int+=2;c.pow+=2;log(`🎉 LEVEL UP! ${c.name} は Lv.${c.level} になった！\nステータスが上昇した！`,"success")}}
-function finishBattle(win){const b=save.battle,c=save.character;if(win){gainExp(b.enemy.exp);save.gold+=b.enemy.gold;log(`💰 Gold +${b.enemy.gold}`,"success")}/* 戦闘終了時、戦闘前のHP/MPへ戻す */c.hp=b.returnState.hp;c.mp=b.returnState.mp;save.battle=null;persist();log("戦闘終了。戦闘前のHP/MPに戻りました。")}
+function finishBattle(win){
+    const b = save.battle;
+    const c = save.character;
+
+    if(win){
+        gainExp(b.enemy.exp);
+        save.gold += b.enemy.gold;
+
+        log(`💰 Gold +${b.enemy.gold}`,"success");
+    }
+
+    /*
+     * 戦闘終了時にHPとMPを最大値まで回復
+     */
+    c.hp = c.maxHp;
+    c.mp = c.maxMp;
+
+    save.battle = null;
+
+    persist();
+
+    log("戦闘終了。HPとMPが最大値まで回復しました。");
+}
 function attack(){if(!save.battle)return usage("/battle_start","戦闘中ではありません。");const e=save.battle.enemy,c=save.character;autoItem(); const weaponBonus=save.equipment?.weapon?.bonus||0; const d=Math.max(1,rand(8,18)+c.str+weaponBonus-Math.floor(e.defense*.35));e.hp-=d;log(`${c.name}の攻撃！ ${d}ダメージ。`);if(e.hp<=0){log(`${e.name}を倒した！`,"success");rollRareEquipment(e);return finishBattle(true)}const armorBonus=save.equipment?.armor?.bonus||0; const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);c.hp=Math.max(0,c.hp-ed);log(`${e.name}の攻撃！ ${ed}ダメージ。`);if(c.hp<=0){log("あなたは倒れた……","error");return finishBattle(false)}persist();battleStatus()}
 function magic(name){if(!name)return usage("/magic_cast");if(!save.battle)return usage("/battle_start","戦闘中ではありません。");const c=save.character,e=save.battle.enemy;if(c.mp<10)return log("MPが足りません。","error");c.mp-=10;const d=Math.max(1,rand(20,35)+c.int-Math.floor(e.defense*.15));e.hp-=d;log(`${name}！ ${d}ダメージ。`);if(e.hp<=0){log(`${e.name}を倒した！`,"success");rollRareEquipment(e);return finishBattle(true)}const armorBonus=save.equipment?.armor?.bonus||0; const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);c.hp=Math.max(0,c.hp-ed);if(c.hp<=0)return finishBattle(false);persist();battleStatus()}
 function run(){if(!save.battle)return usage("/battle_start","戦闘中ではありません。");if(Math.random()<.65){log("逃走に成功した！");finishBattle(false)}else{log("逃走に失敗した！","warn");const e=save.battle.enemy,c=save.character;c.hp=Math.max(0,c.hp-rand(1,e.attack));persist();battleStatus()}}
