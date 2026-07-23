@@ -109,7 +109,14 @@ const $=s=>document.querySelector(s);
 function log(msg,type="system"){
   const e=document.createElement("div");
   e.className="line "+type;
-  e.textContent=msg;
+
+  // 改行を確実に表示
+  e.innerHTML = String(msg)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/\n/g,"<br>");
+
   $("#output").appendChild(e);
   $("#output").scrollTop=$("#output").scrollHeight;
 }
