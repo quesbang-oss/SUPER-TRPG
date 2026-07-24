@@ -21,6 +21,34 @@ const ENEMIES = {
   void_beast:{name:"虚無獣",baseHp:6000,baseAttack:220,baseDefense:130,baseExp:9000,gold:10000,desc:"世界の外側から来た怪物。"}
 };
 
+/* =========================================
+   ボス・裏ボス
+========================================= */
+const BOSSES={
+  boss_01:{name:"紅蓮の覇王ヴァルガス",rank:1,hp:90000,attack:200,defense:30,desc:"灼熱の大剣を振るう覇王。"},
+  boss_02:{name:"深海王アビサル",rank:2,hp:110000,attack:200,defense:30,desc:"深海を支配する古代の王。"},
+  boss_03:{name:"天空要塞ゼファリオン",rank:3,hp:150000,attack:250,defense:30,desc:"空を要塞に変えた機械竜。"},
+  boss_04:{name:"冥界公爵ネクロヴァ",rank:4,hp:200000,attack:300,defense:30,desc:"死者の軍勢を率いる公爵。"},
+  boss_05:{name:"星喰らいグラビオン",rank:5,hp:300000,attack:350,defense:30,desc:"星の光すら喰らう巨獣。"},
+  boss_06:{name:"時空皇帝クロノゼロ",rank:6,hp:500000,attack:400,defense:30,desc:"時間を歪める皇帝。"},
+  boss_07:{name:"終焉騎士アポカリプス",rank:7,hp:650000,attack:500,defense:30,desc:"世界の終わりを告げる騎士。"},
+  boss_08:{name:"混沌神カオス・レギオン",rank:8,hp:800000,attack:600,defense:30,desc:"無数の力を混ぜ合わせた神。"},
+  boss_09:{name:"万象破壊獣オメガ",rank:9,hp:999999,attack:900,defense:30,desc:"存在そのものを破壊する怪物。"},
+  boss_10:{name:"世界断絶神エンド・オブ・ワールド",rank:10,hp:1000000,attack:1000,defense:30,desc:"世界の境界を断ち切る最終存在。"}
+};
+
+const SUPER_BOSSES={
+  sunshine_izake:{name:"サンシャインイ・ザーキ",hp:1500000,attack:1200,defense:30,gold:150000,skill:"shine",desc:"shineで通常攻撃を行いながら攻撃力が毎回50上昇する。"},
+  moon_senbei:{name:"月せんべい",hp:1000000,attack:1000,defense:30,gold:100000,skill:"がっちがちやで",desc:"がっちがちやでで通常攻撃を行いながら防御力が毎回10上昇する。"},
+  evolving_void_beast:{name:"進化する虚無獣",hp:500000,attack:1200,defense:30,gold:50000,desc:"倒されるたび、次回の戦闘でHP+500000、攻撃力+300。"}
+};
+
+const BOSS_RANK_STATS={
+  1:{hp:90000,attack:200},2:{hp:110000,attack:200},3:{hp:150000,attack:250},
+  4:{hp:200000,attack:300},5:{hp:300000,attack:350},6:{hp:500000,attack:400},
+  7:{hp:650000,attack:500},8:{hp:800000,attack:600},9:{hp:999999,attack:900},10:{hp:1000000,attack:1000}
+};
+
 const COMMANDS=[
   ["/char_create",["/c"],"キャラクター作成","/char_create 名前"],
   ["/char_list",["/cl"],"キャラクター一覧","/char_list"],
@@ -35,6 +63,8 @@ const COMMANDS=[
   ["/item_use",["/iu"],"アイテム使用","/item_use potion|ether|番号"],
   ["/equip",["/eq"],"アイテム一覧の番号で装備","/equip weapon|armor 番号"],
 ["/synthesize",["/syn"],"装備合成","/synthesize 番号 番号 番号"],
+  ["/boss_list",["/bl"],"ボス・裏ボス一覧","/boss_list"],
+  ["/boss_info",["/bi"],"ボス・裏ボス情報","/boss_info ID"],
   ["/enemy_list",["/el"],"敵ID一覧","/enemy_list"],
   ["/enemy_info",["/ei"],"敵情報","/enemy_info 敵ID レベル"],
   ["/battle_start",["/b"],"戦闘開始","/battle_start 敵ID レベル"],
@@ -79,47 +109,38 @@ const EQUIPMENT_SPECIALS={
 ========================================= */
 const SECRET_EQUIPMENT={
   "dragon_soul":{
-    name:"大魔神の予言書",
-    type:"weapon",
-    stars:"SECRET",
-    bonus:100,
-    maxLevel:5,
-
-    specialMagic:{
-      name:"ゲプトラダムスの大間違い",
-      damage:1000,
-      mpCost:100
-    }
+    name:"大魔神の予言書",type:"weapon",stars:"SECRET",bonus:100,
+    specialMagic:{name:"ゲプトラダムスの大間違い",damage:1000,mpCost:100}
   },
-"bossgdora":{
-    name:"超弩級破壊兵器ボスゴドーラ",
-    type:"armor",
-    stars:"SECRET",
-    bonus:400,
-    maxLevel:5,
-
-    specialMagic:{
-      name:"ぐぅおぉぉぉぉぉ",
-      damage:9999999,
-      mpCost:9999999
-    }
+  "bossgdora":{
+    name:"超弩級破壊兵器ボスゴドーラ",type:"armor",stars:"SECRET",bonus:400,
+    specialMagic:{name:"ぐぅおぉぉぉぉぉ",damage:9999999,mpCost:9999999}
   },
   "world_end":{
-    name:"スーパーチュールブレイカー",
-    type:"weapon",
-    stars:"SECRET",
-    bonus:222,
-    maxLevel:5,
-
-    specialMagic:{
-      name:"猫の大群",
-      damage:888,
-      mpCost:50
-    }
+    name:"スーパーチュールブレイカー",type:"weapon",stars:"SECRET",bonus:222,
+    specialMagic:{name:"猫の大群",damage:888,mpCost:50}
+  },
+  "chemical_x":{
+    name:"けぇみかるX",type:"armor",stars:"SECRET",bonus:500,
+    specialMagic:{name:"ケミカル・リアクション",damage:3000,mpCost:120}
+  },
+  "fantastic":{
+    name:"ファンタスティック",type:"weapon",stars:"SECRET",bonus:700,
+    specialMagic:{name:"ファンタスティック・インパクト",damage:10000,mpCost:180}
+  },
+  "mister_sword":{
+    name:"ミスターソード",type:"weapon",stars:"SECRET",bonus:1000,
+    specialMagic:{name:"ミスター・スラッシュ",damage:30000,mpCost:250}
+  },
+  "bold_titan":{
+    name:"大胆なタイタン",type:"armor",stars:"SECRET",bonus:1500,
+    specialMagic:{name:"タイタン・フォートレス",damage:80000,mpCost:350}
+  },
+  "confiscation":{
+    name:"コンフィスケイション",type:"weapon",stars:"SECRET",bonus:2500,
+    specialMagic:{name:"コンフィスケイション・オーバーキル",damage:200000,mpCost:500}
   }
 };
-
-
 
 /* =========================================
    レアリティ合成設定
@@ -157,10 +178,8 @@ function normalizeItem(item){
     item.stars="SECRET";
 
     item.killCount=Number(item.killCount)||0;
-    item.level=Math.min(
-      Number(item.maxLevel)||5,
-      Math.floor(item.killCount/10)
-    );
+    // SECRETのレベルは無制限。10撃破ごとにLv+1。
+    item.level=Math.floor(item.killCount/10);
 
     item.bonus=Number(item.bonus)||0;
 
@@ -401,10 +420,7 @@ function getEquipmentLevel(item){
   if(!item)return 0;
 
   if(item.rarity==="SECRET"){
-    return Math.min(
-      Number(item.maxLevel)||5,
-      Math.floor((Number(item.killCount)||0)/10)
-    );
+    return Math.floor((Number(item.killCount)||0)/10);
   }
 
   return Math.min(
@@ -420,7 +436,8 @@ function getEquipmentBonus(item){
   // SECRET装備は stars を計算に使わず、
   // SECRET_EQUIPMENT の bonus をそのまま使う
   if(item.rarity==="SECRET"){
-    return Number(item.bonus)||0;
+    const lv=getEquipmentLevel(item);
+    return Math.floor((Number(item.bonus)||0)*Math.pow(1.1,lv));
   }
 
   return getEquipmentLevel(item)*Number(item.stars||0);
@@ -432,16 +449,9 @@ function getSpecialName(item){
 
   // Secret装備
   if(item.rarity==="SECRET"){
-
-    if(
-      getEquipmentLevel(item)>=
-      (Number(item.maxLevel)||5)
-    ){
-
-      return item.specialMagic?.name||null;
-    }
-
-    return null;
+    return getEquipmentLevel(item)>=1
+      ? item.specialMagic?.name||null
+      : null;
   }
 
   // 通常装備
@@ -454,15 +464,11 @@ function getSpecialName(item){
   if(!item)return 0;
 
   if(item.rarity==="SECRET"){
-
-    if(
-      getEquipmentLevel(item)>=
-      (Number(item.maxLevel)||5)
-    ){
-
-      return Number(
-        item.specialMagic?.damage
-      )||0;
+    const lv=getEquipmentLevel(item);
+    if(lv>=1){
+      return Math.floor(
+        (Number(item.specialMagic?.damage)||0)*Math.pow(1.1,lv)
+      );
     }
   }
 
@@ -475,15 +481,8 @@ function getSpecialMpCost(item){
   if(!item)return 20;
 
   if(item.rarity==="SECRET"){
-
-    if(
-      getEquipmentLevel(item)>=
-      (Number(item.maxLevel)||5)
-    ){
-
-      return Number(
-        item.specialMagic?.mpCost
-      )||20;
+    if(getEquipmentLevel(item)>=1){
+      return Number(item.specialMagic?.mpCost)||20;
     }
   }
 
@@ -566,10 +565,20 @@ function useItem(name){
   save.inventory.items.splice(index,1);
 
   // ☆10装備を消費してプレイヤーを強化
-  c.maxHp+=30;
-  c.hp+=30;
-  c.maxMp+=30;
-  c.mp+=30;
+  // HP +100、MP +50。消費時に装備していた防具の補正+10、武器の補正+1。
+  c.maxHp+=100;
+  c.hp+=100;
+  c.maxMp+=50;
+  c.mp+=50;
+
+  const equippedArmor=save.equipment?.armor;
+  const equippedWeapon=save.equipment?.weapon;
+  if(equippedArmor){
+    equippedArmor.bonus=(Number(equippedArmor.bonus)||0)+10;
+  }
+  if(equippedWeapon){
+    equippedWeapon.bonus=(Number(equippedWeapon.bonus)||0)+1;
+  }
 
   save.characters=save.characters.map(x=>x.id===c.id?c:x);
 
@@ -577,8 +586,8 @@ function useItem(name){
 
   log(
     `✨ ${item.name} を消費した！\n`+
-    `最大HP +30\n`+
-    `最大MP +30\n`+
+    `最大HP +100\n`+
+    `最大MP +50\n`+
     `HP ${c.hp}/${c.maxHp}\n`+
     `MP ${c.mp}/${c.maxMp}`,
     "success"
@@ -847,6 +856,132 @@ function synthesizeItems(index1,index2,index3){
     "success"
   );
 }
+function bossList(){
+  const lines=[
+    "【ボス】",
+    ...Object.entries(BOSSES).map(([id,b])=>`${id} → ランク${b.rank} ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`),
+    "",
+    "【裏ボス】",
+    ...Object.entries(SUPER_BOSSES).map(([id,b])=>`${id} → ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`)
+  ];
+  log(lines.join("\\n"));
+}
+
+function bossInfo(id){
+  if(!id)return usage("/boss_info");
+  const b=BOSSES[id];
+  if(b){
+    log(`${b.name} ランク${b.rank}\\nHP ${b.hp}\\n攻撃 ${b.attack}\\n防御 ${b.defense}\\n報酬: レベル${b.rank}アップ\\n${b.desc}`);
+    return;
+  }
+  const sb=SUPER_BOSSES[id];
+  if(sb){
+    log(`${sb.name}\\nHP ${sb.hp}\\n攻撃 ${sb.attack}\\n防御 ${sb.defense}\\n報酬: Gold ${sb.gold}\\n${sb.desc}`);
+    return;
+  }
+  log(`ボスID「${id}」がありません。\\n/boss_list で確認してください。`,"error");
+}
+
+function bossStats(id){
+  const b=BOSSES[id];
+  if(b){
+    return {
+      ...b,
+      id,
+      boss:true,
+      bossRank:b.rank,
+      maxHp:b.hp,
+      hp:b.hp,
+      exp:0,
+      gold:0
+    };
+  }
+  const sb=SUPER_BOSSES[id];
+  if(sb){
+    let hp=sb.hp;
+    let attack=sb.attack;
+    if(id==="evolving_void_beast"){
+      const evolution=Number(save.history?.evolvingVoidBeastEvolution)||0;
+      hp+=evolution*500000;
+      attack+=evolution*300;
+    }
+    return {
+      ...sb,
+      id,
+      superBoss:true,
+      maxHp:hp,
+      hp,
+      attack,
+      exp:0,
+      gold:Math.floor(hp/10)
+    };
+  }
+  return null;
+}
+
+function rollBossSecretEquipment(enemy){
+  if(!enemy?.boss&&!enemy?.superBoss)return null;
+  const chance=enemy.boss
+    ? Math.min(0.15,0.05+enemy.bossRank*0.01)
+    : 0.15;
+  if(Math.random()>=chance)return null;
+  const keys=Object.keys(SECRET_EQUIPMENT);
+  const secret=SECRET_EQUIPMENT[keys[rand(0,keys.length-1)]];
+  const item={
+    id:String(Date.now()+Math.random()),
+    type:secret.type,
+    rarity:"SECRET",
+    stars:"SECRET",
+    name:secret.name,
+    bonus:secret.bonus,
+    killCount:0,
+    level:0,
+    specialMagic:{...secret.specialMagic}
+  };
+  save.inventory.items.push(item);
+  log(`✨✨✨ SECRETドロップ！ ${item.name}\\n補正+${item.bonus}\\n必殺技: ${item.specialMagic.name}（Lv.1から使用可能）\\nボスからのSECRET抽選率: ${(chance*100).toFixed(0)}%`,"success");
+  return item;
+}
+
+function gainBossReward(enemy){
+  const c=save.character;
+  if(enemy.boss){
+    for(let i=0;i<enemy.bossRank;i++){
+      c.level++;
+      c.maxHp+=20;c.hp=c.maxHp;
+      c.maxMp+=10;c.mp=c.maxMp;
+      c.str+=2;c.dex+=2;c.int+=2;c.pow+=2;
+    }
+    log(`🏆 ボス報酬！ ${enemy.name}を撃破し、レベル${enemy.bossRank}アップ！`,"success");
+  }else if(enemy.superBoss){
+    save.gold+=enemy.gold;
+    log(`🏆 裏ボス報酬！ Gold +${enemy.gold}`,"success");
+  }
+}
+
+function bossEnemyTurn(){
+  if(!save.battle)return;
+  const e=save.battle.enemy,c=save.character;
+  const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-getEquipmentBonus(save.equipment?.armor));
+  c.hp=Math.max(0,c.hp-ed);
+  log(`${e.name}の攻撃！ ${ed}ダメージ。`);
+
+  if(e.id==="sunshine_izake"){
+    e.attack+=50;
+    log(`☀ shine！ ${e.name}の攻撃力が50上昇した！ 攻撃力 ${e.attack}`,"warn");
+  }else if(e.id==="moon_senbei"){
+    e.defense+=10;
+    log(`🌙 がっちがちやで！ ${e.name}の防御力が10上昇した！ 防御力 ${e.defense}`,"warn");
+  }
+
+  if(c.hp<=0){
+    log("あなたは倒れた……","error");
+    return finishBattle(false);
+  }
+  persist();
+  battleStatus();
+}
+
 function enemyStats(id,lv){
   const b=ENEMIES[id];
   const level=Math.max(1,Number(lv)||1);
@@ -876,15 +1011,19 @@ function enemyInfo(id,lv){
 
 function battleStart(id,lv){
   if(!id)return usage("/battle_start");
-  if(!ENEMIES[id])return log(`敵ID「${id}」がありません。\n/enemy_list で確認してください。`,"error");
   if(!save.character)return usage("/char_create","先にキャラクターを作成してください。");
-  const e=enemyStats(id,lv||1);
+  const e=bossStats(id)||(
+    ENEMIES[id]
+      ? enemyStats(id,lv||1)
+      : null
+  );
+  if(!e)return log(`敵・ボスID「${id}」がありません。\n/enemy_list または /boss_list で確認してください。`,"error");
   save.battle={
     enemy:e,
     returnState:{hp:save.character.hp,mp:save.character.mp}
   };
   persist();
-  log(`⚔ ${e.name} Lv.${e.level} が現れた！\nHP ${e.hp} / 攻撃 ${e.attack} / 防御 ${e.defense}`);
+  log(`⚔ ${e.name}${e.boss?`【ボス ランク${e.bossRank}】`:e.superBoss?"【裏ボス】":` Lv.${e.level}`} が現れた！\nHP ${e.hp} / 攻撃 ${e.attack} / 防御 ${e.defense}`);
   battleStatus();
 }
 
@@ -930,10 +1069,21 @@ function finishBattle(win){
   const c=save.character;
   if(!b)return;
   if(win){
-    gainExp(b.enemy.exp);
-    save.gold+=b.enemy.gold;
-    increaseEquipmentKills();
-    log(`💰 Gold +${b.enemy.gold}`,"success");
+    if(b.enemy.boss||b.enemy.superBoss){
+      gainBossReward(b.enemy);
+      rollBossSecretEquipment(b.enemy);
+      if(b.enemy.id==="evolving_void_beast"){
+        save.history=save.history||{};
+        save.history.evolvingVoidBeastEvolution=(Number(save.history.evolvingVoidBeastEvolution)||0)+1;
+        log(`🧬 進化する虚無獣は次回、HP+500000・攻撃+300で進化する！`,"warn");
+      }
+    }else{
+      gainExp(b.enemy.exp);
+      save.gold+=b.enemy.gold;
+      increaseEquipmentKills();
+      rollRareEquipment(b.enemy);
+      log(`💰 Gold +${b.enemy.gold}`,"success");
+    }
   }
   c.hp=c.maxHp;
   c.mp=c.maxMp;
@@ -957,8 +1107,10 @@ function attack(){
   log(`${c.name}の攻撃！ ${d}ダメージ。`);
   if(e.hp<=0){
     log(`${e.name}を倒した！`,"success");
-    rollRareEquipment(e);
     return finishBattle(true);
+  }
+  if(e.boss||e.superBoss){
+    return bossEnemyTurn();
   }
   const armorBonus=getEquipmentBonus(save.equipment?.armor);
   const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);
@@ -1010,8 +1162,10 @@ const mpCost=
   log(isSpecial?`✨ 必殺技「${specialName}」発動！ ${d}ダメージ！`:`${name}！ ${d}ダメージ。`,isSpecial?"success":"system");
   if(e.hp<=0){
     log(`${e.name}を倒した！`,"success");
-    rollRareEquipment(e);
     return finishBattle(true);
+  }
+  if(e.boss||e.superBoss){
+    return bossEnemyTurn();
   }
   const armorBonus=getEquipmentBonus(save.equipment?.armor);
   const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);
@@ -1751,14 +1905,15 @@ function help(){
     "/equip weapon 番号 武器を装備（例: /equip weapon 1）\n"+
     "/equip armor 番号 防具を装備（例: /equip armor 2）\n"+
     "/item_use potion|ether 戦闘中にアイテム使用\n"+
-    "☆10の武器・防具は装備でき、/item_use 番号で消費すると最大HP+30・最大MP+30。\n"+
+    "☆10の武器・防具は装備でき、/item_use 番号で消費すると最大HP+100・最大MP+50。消費時に装備中の防具補正+10、武器補正+1。\n"+
     "\n【武器・防具の成長】\n"+
     "装備中の武器・防具は敵を倒すたびに撃破数+1。\n"+
     "10体撃破ごとに装備Lv+1、最大Lv.5（50体）です。\n"+
     "補正値は「★の数×装備Lv」です。\n"+
     "例：★3・Lv.5 → 補正+15 / ★10・Lv.5 → 補正+50。\n"+
     "\n【必殺技】\n"+
-    "装備Lv.5になると必殺技が解放されます。\n"+
+    "通常装備はLv.5で必殺技が解放されます。SECRET装備はLv.1から必殺技が解放され、レベル上限なし。\n"+
+    "SECRETは1レベル上がるごとに必殺技威力と補正値が1.1倍。\n"+
     "/magic_cast 必殺技名 で発動。通常攻撃の3倍ダメージ、MP20消費。\n"+
     "★1 ブレイクスラッシュ\n"+
     "★2 ツインエッジ\n"+
@@ -1771,7 +1926,8 @@ function help(){
     "★9 ディメンションブレイク\n"+
     "★10 ラグナロク\n"+
     "\n【敵・戦闘】\n"+
-    COMMANDS.filter(c=>["/enemy_list","/enemy_info","/battle_start","/battle_status","/battle_attack","/magic_cast","/battle_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
+    COMMANDS.filter(c=>["/enemy_list","/enemy_info","/boss_list","/boss_info","/battle_start","/battle_status","/battle_attack","/magic_cast","/battle_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
+    "\nボスはランク1〜10。撃破報酬はランクと同じレベルアップ。\n裏ボスの報酬Goldは撃破時HPの10分の1。\n"+
     "\n\n【PvP】\n"+
     "PvP開始時にそれぞれのキャラクターのステータスをコピーします。\n"+
     "PvP中のHP・MP・装備状態の変化は元のキャラクターに影響しません。\n"+
@@ -1807,6 +1963,8 @@ function execute(raw){
     p[1],
     p[2]
   );
+    case"/boss_list":return bossList();
+    case"/boss_info":return bossInfo(p[0]);
     case"/enemy_list":return enemyList();
     case"/enemy_info":return enemyInfo(p[0],p[1]);
     case"/battle_start":return battleStart(p[0],p[1]);
