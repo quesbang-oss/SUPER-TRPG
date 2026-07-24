@@ -668,7 +668,6 @@ function pvpMagic(n){
 let onlineRoomCode=null;
 let onlineUnsubscribe=null;
 let onlineLogSeen=new Set();
-let onlineStatusSeen="";
 
 /*
   オンラインPvP専用のプレイヤーID
@@ -915,6 +914,21 @@ function onlineRenderLogs(room){
     });
 }
 
+function onlineHpGauge(hp,maxHp){
+  const total=20;
+  const ratio=maxHp>0?Math.max(0,Math.min(1,hp/maxHp)):0;
+  const filled=Math.round(ratio*total);
+  return "■".repeat(filled)+"□".repeat(total-filled);
+}
+
+let onlineLastStatusKey="";
+
+function onlineStatusKey(room){
+  const p1=room.players?.player1;
+  const p2=room.players?.player2;
+  return [room.status,room.turn,p1?.hp,p1?.mp,p2?.hp,p2?.mp].join("|");
+}
+
 function onlineListen(code){
 
   if(onlineUnsubscribe){
@@ -922,7 +936,7 @@ function onlineListen(code){
   }
 
   onlineLogSeen=new Set();
-  onlineStatusSeen="";
+  onlineLastStatusKey="";
 
   const roomRef=window.firebaseRef(
     window.firebaseDB,
@@ -942,7 +956,11 @@ function onlineListen(code){
       onlineRenderLogs(room);
 
       if(room.status==="battle"){
-        logOnlineStatus(room);
+        const key=onlineStatusKey(room);
+        if(key!==onlineLastStatusKey){
+          onlineLastStatusKey=key;
+          logOnlineStatus(room);
+        }
       }
 
       if(room.status==="finished"){
@@ -980,35 +998,20 @@ function getOnlinePlayer(room){
   return null;
 }
 
-function hpGauge(hp,maxHp){
-  const total=20;
-  const ratio=maxHp>0?Math.max(0,Math.min(1,hp/maxHp)):0;
-  const filled=Math.ceil(ratio*total);
-  return "■".repeat(filled)+"□".repeat(total-filled);
-}
-
 function logOnlineStatus(room){
 
   const p1=room.players?.player1;
   const p2=room.players?.player2;
 
   if(!p1||!p2){
-    const key="waiting";
-    if(onlineStatusSeen!==key){
-      onlineStatusSeen=key;
-      log("相手の参加を待っています……");
-    }
+    log("相手の参加を待っています……");
     return;
   }
 
-  const key=[p1.hp,p2.hp,room.turn,p1.name,p2.name].join("|");
-  if(onlineStatusSeen===key)return;
-  onlineStatusSeen=key;
-
   log(
     `【オンラインPvP】\n`+
-    `${p1.name}: ${hpGauge(p1.hp,p1.maxHp)}\n`+
-    `${p2.name}: ${hpGauge(p2.hp,p2.maxHp)}\n`+
+    `${p1.name}: ${onlineHpGauge(p1.hp,p1.maxHp)}\n`+
+    `${p2.name}: ${onlineHpGauge(p2.hp,p2.maxHp)}\n`+
     `現在のターン: ${room.turn===0?p1.name:p2.name}`
   );
 }
@@ -1155,7 +1158,12 @@ async function onlineStatus(){
   const snapshot=await window.firebaseGet(roomRef);
 
   if(snapshot.exists()){
-    logOnlineStatus(snapshot.val());
+    const room=snapshot.val();
+    const key=onlineStatusKey(room);
+    if(key!==onlineLastStatusKey){
+      onlineLastStatusKey=key;
+      logOnlineStatus(room);
+    }
   }
 }
 
