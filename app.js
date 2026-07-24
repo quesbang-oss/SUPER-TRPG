@@ -382,20 +382,103 @@ function statusReroll(){
   log(`💰 ${cost} Goldを使用してステータスを振りなおしました！\nSTR ${c.str} / DEX ${c.dex} / INT ${c.int} / POW ${c.pow}`,"success");
 }
 
-function statusUp(stat){
-  if(!save.character)return usage("/status_up","先にキャラクターを作成してください。");
+function statusUp(stat, amount=1){
+
+  if(!save.character){
+    return usage(
+      "/status_up",
+      "先にキャラクターを作成してください。"
+    );
+  }
+
   const key=String(stat||"").toLowerCase();
-  const map={str:"str",dex:"dex",int:"int",pow:"pow"};
-  const jp={str:"STR",dex:"DEX",int:"INT",pow:"POW"};
-  const k=map[key]||map[{"筋力":"str","敏捷":"dex","知力":"int","精神":"pow"}[key]];
-  if(!k)return usage("/status_up");
-  const cost=ENEMIES.slime.baseExp*20;
-  if(save.gold<cost)return log(`Goldが足りません。必要: ${cost} Gold（スライム20体分）`,"error");
-  save.gold-=cost;
-  save.character[k]+=1;
-  save.characters=save.characters.map(x=>x.id===save.character.id?save.character:x);
+
+  const map={
+    str:"str",
+    dex:"dex",
+    int:"int",
+    pow:"pow"
+  };
+
+  const jp={
+    str:"STR",
+    dex:"DEX",
+    int:"INT",
+    pow:"POW"
+  };
+
+  const k=
+    map[key]||
+    map[
+      {
+        "筋力":"str",
+        "敏捷":"dex",
+        "知力":"int",
+        "精神":"pow"
+      }[key]
+    ];
+
+  if(!k){
+    return usage(
+      "/status_up",
+      "STR / DEX / INT / POW のいずれかを指定してください。"
+    );
+  }
+
+  // 数値を取得
+  let count=Number(amount);
+
+  // 数字がない場合は1
+  if(amount===undefined||amount===""){
+    count=1;
+  }
+
+  // 整数以外・0以下は禁止
+  if(
+    !Number.isInteger(count)||
+    count<=0
+  ){
+    return log(
+      "増加量は1以上の整数で指定してください。",
+      "error"
+    );
+  }
+
+  // 1回200 Gold
+  const costPer=ENEMIES.slime.baseExp*20;
+
+  const totalCost=
+    costPer*count;
+
+  if(save.gold<totalCost){
+    return log(
+      `Goldが足りません。\n`+
+      `必要: ${totalCost} Gold\n`+
+      `現在: ${save.gold} Gold`,
+      "error"
+    );
+  }
+
+  save.gold-=totalCost;
+
+  save.character[k]+=count;
+
+  save.characters=
+    save.characters.map(
+      x=>
+        x.id===save.character.id
+          ?save.character
+          :x
+    );
+
   persist();
-  log(`💰 ${cost} Goldを使用して${jp[k]}を+1しました！`,"success");
+
+  log(
+    `💰 ${totalCost} Goldを使用しました！\n`+
+    `${jp[k]} +${count}\n`+
+    `現在の${jp[k]}: ${save.character[k]}`,
+    "success"
+  );
 }
 
 const WEAPON_NAMES_BY_STAR={
@@ -1962,7 +2045,8 @@ function execute(raw){
     case"/char_reset":return reset();
     case"/status":return status();
     case"/status_reroll":return statusReroll();
-    case"/status_up":return statusUp(p[0]);
+    case"/status_up":
+  return statusUp(p[0],p[1]);
     case"/item_list":return itemList();
     case"/item_use":return useItem(p[0]);
     case"/equip":return equipItem(p[1]||p[0]);
