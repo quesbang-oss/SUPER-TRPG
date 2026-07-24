@@ -668,6 +668,7 @@ function pvpMagic(n){
 let onlineRoomCode=null;
 let onlineUnsubscribe=null;
 let onlineLogSeen=new Set();
+let onlineStatusSeen="";
 
 /*
   オンラインPvP専用のプレイヤーID
@@ -921,6 +922,7 @@ function onlineListen(code){
   }
 
   onlineLogSeen=new Set();
+  onlineStatusSeen="";
 
   const roomRef=window.firebaseRef(
     window.firebaseDB,
@@ -978,20 +980,35 @@ function getOnlinePlayer(room){
   return null;
 }
 
+function hpGauge(hp,maxHp){
+  const total=20;
+  const ratio=maxHp>0?Math.max(0,Math.min(1,hp/maxHp)):0;
+  const filled=Math.ceil(ratio*total);
+  return "■".repeat(filled)+"□".repeat(total-filled);
+}
+
 function logOnlineStatus(room){
 
   const p1=room.players?.player1;
   const p2=room.players?.player2;
 
   if(!p1||!p2){
-    log("相手の参加を待っています……");
+    const key="waiting";
+    if(onlineStatusSeen!==key){
+      onlineStatusSeen=key;
+      log("相手の参加を待っています……");
+    }
     return;
   }
 
+  const key=[p1.hp,p2.hp,room.turn,p1.name,p2.name].join("|");
+  if(onlineStatusSeen===key)return;
+  onlineStatusSeen=key;
+
   log(
     `【オンラインPvP】\n`+
-    `${p1.name}: HP ${p1.hp}/${p1.maxHp} MP ${p1.mp}/${p1.maxMp}\n`+
-    `${p2.name}: HP ${p2.hp}/${p2.maxHp} MP ${p2.mp}/${p2.maxMp}\n`+
+    `${p1.name}: ${hpGauge(p1.hp,p1.maxHp)}\n`+
+    `${p2.name}: ${hpGauge(p2.hp,p2.maxHp)}\n`+
     `現在のターン: ${room.turn===0?p1.name:p2.name}`
   );
 }
