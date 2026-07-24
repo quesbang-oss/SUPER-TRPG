@@ -414,8 +414,16 @@ function getEquipmentLevel(item){
 }
 
 function getEquipmentBonus(item){
+
   if(!item)return 0;
-  return getEquipmentLevel(item)*item.stars;
+
+  // SECRET装備は stars を計算に使わず、
+  // SECRET_EQUIPMENT の bonus をそのまま使う
+  if(item.rarity==="SECRET"){
+    return Number(item.bonus)||0;
+  }
+
+  return getEquipmentLevel(item)*Number(item.stars||0);
 }
 
 function getSpecialName(item){
