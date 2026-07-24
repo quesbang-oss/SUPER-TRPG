@@ -447,6 +447,7 @@ function enemyInfo(id,lv){
 
 function battleStart(id,lv){
   if(!id)return usage("/battle_start");
+  if(save.battle)return log("すでに戦闘中です。先に戦闘を終了してください。","warn");
   if(!ENEMIES[id])return log(`敵ID「${id}」がありません。\n/enemy_list で確認してください。`,"error");
   if(!save.character)return usage("/char_create","先にキャラクターを作成してください。");
   const e=enemyStats(id,lv||1);
@@ -590,6 +591,7 @@ function cloneForPvP(character){
 
 function pvpStart(a,b){
   if(!a||!b)return usage("/pvp_start");
+  if(save.pvp)return log("すでにPvP中です。","warn");
   const p1=save.characters.find(c=>c.name===a)||save.characters[Number(a)-1];
   const p2=save.characters.find(c=>c.name===b)||save.characters[Number(b)-1];
   if(!p1||!p2)return log("PvP参加キャラクターが見つかりません。/char_listで確認してください。","error");
@@ -717,7 +719,7 @@ function onlineCharacter(){
     dex:c.dex,
     int:c.int,
     pow:c.pow,
-    equipment:c.equipment||{}
+    equipment:cloneForPvP(save.equipment||{weapon:null,armor:null})
   };
 }
 
@@ -790,6 +792,8 @@ async function onlineCreate(){
 
 }
 async function onlineJoin(code){
+
+  try{
 
   if(!window.firebaseDB){
     return log(
@@ -875,6 +879,10 @@ async function onlineJoin(code){
 
   onlineListen(onlineRoomCode);
 
+  }catch(e){
+    console.error(e);
+    log("オンラインPvPへの参加に失敗しました。\n"+e.message,"error");
+  }
 }
 
 function onlineListen(code){
@@ -1243,10 +1251,6 @@ case"/online_create":
 
     case"/online_end":
       return onlineEnd();
-      if(!save.pvp)return usage("/pvp_start","PvP中ではありません。");
-      save.pvp=null;
-      persist();
-      return log("PvPを終了しました。");
     case"/save":persist();return log("保存しました。","success");
     case"/load":save=load();render();return log("読み込みました。","success");
     case"/clear":$("#output").innerHTML="";return;
