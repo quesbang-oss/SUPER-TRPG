@@ -696,6 +696,7 @@ function makeRoomCode(){
 }
 
 function onlineCharacter(){
+
   if(!save.character){
     log("先にキャラクターを作成してください。","error");
     return null;
@@ -711,15 +712,22 @@ function onlineCharacter(){
     name:c.name,
     level:c.level,
     exp:c.exp,
+
     maxHp:c.maxHp,
     hp:c.hp,
+
     maxMp:c.maxMp,
     mp:c.mp,
+
     str:c.str,
     dex:c.dex,
     int:c.int,
     pow:c.pow,
-    equipment:cloneForPvP(save.equipment||{weapon:null,armor:null})
+
+    equipment:{
+      weapon:normalizeItem(save.equipment?.weapon),
+      armor:normalizeItem(save.equipment?.armor)
+    }
   };
 }
 
