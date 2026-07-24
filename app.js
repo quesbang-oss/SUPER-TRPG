@@ -103,46 +103,126 @@ const EQUIPMENT_SPECIALS={
    SECRETレアリティ設定
    ここを追加するだけでSecret装備を増やせる
 ========================================= */
-const SECRET_EQUIPMENT={
-  "dragon_soul":{
-    name:"大魔神の予言書",
-    type:"weapon",
-    stars:"SECRET",
-    bonus:100,
-    maxLevel:5,
+const SECRET_EQUIPMENT = {
+  "dragon_soul": {
+    name: "大魔神の予言書",
+    type: "weapon",
+    stars: "SECRET",
+    bonus: 100,
+    maxLevel: 5,
 
-    specialMagic:{
-      name:"ゲプトラダムスの大間違い",
-      damage:1000,
-      mpCost:100
+    specialMagic: {
+      name: "ゲプトラダムスの大間違い",
+      damage: 1000,
+      mpCost: 100,
+      unlockLevel: 5
     }
   },
-"bossgdora":{
-    name:"超弩級破壊兵器ボスゴドーラ",
-    type:"armor",
-    stars:"SECRET",
-    bonus:400,
-    maxLevel:5,
 
-    specialMagic:{
-      name:"ぐぅおぉぉぉぉぉ",
-      damage:9999999,
-      mpCost:9999999
+  "bossgdora": {
+    name: "超弩級破壊兵器ボスゴドーラ",
+    type: "armor",
+    stars: "SECRET",
+    bonus: 400,
+    maxLevel: 5,
+
+    specialMagic: {
+      name: "ぐぅおぉぉぉぉぉ",
+      damage: 9999999,
+      mpCost: 9999999,
+      unlockLevel: 5
     }
   },
-  "world_end":{
-    name:"スーパーチュールブレイカー",
-    type:"weapon",
-    stars:"SECRET",
-    bonus:222,
-    maxLevel:Infinity,
-    specialMagic:{name:"猫の大群",damage:888,mpCost:50}
+
+  "world_end": {
+    name: "スーパーチュールブレイカー",
+    type: "weapon",
+    stars: "SECRET",
+    bonus: 222,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "猫の大群",
+      damage: 888,
+      mpCost: 50,
+      unlockLevel: 5
+    }
   },
-  chemical_x:{name:"けぇみかるX",type:"armor",stars:"SECRET",bonus:30,maxLevel:Infinity,specialMagic:{name:"化学崩壊",damage:500,mpCost:30}},
-  fantastic:{name:"ファンタスティック",type:"weapon",stars:"SECRET",bonus:60,maxLevel:Infinity,specialMagic:{name:"ファンタスティック・バースト",damage:1200,mpCost:50}},
-  mister_sword:{name:"ミスターソード",type:"weapon",stars:"SECRET",bonus:100,maxLevel:Infinity,specialMagic:{name:"ミスター・スラッシュ",damage:2500,mpCost:80}},
-  bold_titan:{name:"大胆なタイタン",type:"armor",stars:"SECRET",bonus:150,maxLevel:Infinity,specialMagic:{name:"大胆な反撃",damage:5000,mpCost:100}},
-  confiscation:{name:"コンフィスケイション",type:"weapon",stars:"SECRET",bonus:250,maxLevel:Infinity,specialMagic:{name:"完全没収",damage:10000,mpCost:150}}
+
+  "chemical_x": {
+    name: "けぇみかるX",
+    type: "armor",
+    stars: "SECRET",
+    bonus: 30,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "化学崩壊",
+      damage: 500,
+      mpCost: 30,
+      unlockLevel: 5
+    }
+  },
+
+  "fantastic": {
+    name: "ファンタスティック",
+    type: "weapon",
+    stars: "SECRET",
+    bonus: 60,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "ファンタスティック・バースト",
+      damage: 1200,
+      mpCost: 50,
+      unlockLevel: 5
+    }
+  },
+
+  "mister_sword": {
+    name: "ミスターソード",
+    type: "weapon",
+    stars: "SECRET",
+    bonus: 100,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "ミスター・スラッシュ",
+      damage: 2500,
+      mpCost: 80,
+      unlockLevel: 5
+    }
+  },
+
+  "bold_titan": {
+    name: "大胆なタイタン",
+    type: "armor",
+    stars: "SECRET",
+    bonus: 150,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "大胆な反撃",
+      damage: 5000,
+      mpCost: 100,
+      unlockLevel: 5
+    }
+  },
+
+  "confiscation": {
+    name: "コンフィスケイション",
+    type: "weapon",
+    stars: "SECRET",
+    bonus: 250,
+    maxLevel: Infinity,
+
+    specialMagic: {
+      name: "完全没収",
+      damage: 10000,
+      mpCost: 150,
+      unlockLevel: 5
+    }
+  }
 };
 
 
@@ -1092,6 +1172,32 @@ function magic(name){
 const isSpecial=
   specialName &&
   name.trim()===specialName;
+
+/* =========================================
+   SECRET必殺技の解放レベルチェック
+========================================= */
+if(isSpecial && weapon?.rarity==="SECRET"){
+
+  const magicData=weapon.specialMagic;
+
+  const unlockLevel=
+    Number(magicData?.unlockLevel)||5;
+
+  const currentLevel=
+    Number(weapon.level)||0;
+
+  if(currentLevel<unlockLevel){
+
+    return log(
+      `${weapon.name}の必殺技「${magicData.name}」は`+
+      `レベル${unlockLevel}で解放されます。`+
+      `（現在レベル: ${currentLevel}）`,
+      "warn"
+    );
+
+  }
+
+}
 
 const mpCost=
   isSpecial
