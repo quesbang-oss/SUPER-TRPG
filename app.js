@@ -228,16 +228,21 @@ let save=load();
 
 const $=s=>document.querySelector(s);
 
-function log(msg,type="system"){
-  const e=document.createElement("div");
-  e.className="line "+type;
-  e.textContent=String(msg)
-    .replace(/\\n/g,"\n")
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n");
-  e.style.whiteSpace="pre-wrap";
-  $("#output").appendChild(e);
-  $("#output").scrollTop=$("#output").scrollHeight;
+function log(message) {
+    const logElement = document.getElementById("log");
+
+    if (!logElement) {
+        console.error("ログ表示欄 #log が見つかりません");
+        return;
+    }
+
+    const line = document.createElement("div");
+    line.textContent = message;
+
+    logElement.appendChild(line);
+
+    // 常に一番下までスクロール
+    logElement.scrollTop = logElement.scrollHeight;
 }
 function persist(){
   try{
