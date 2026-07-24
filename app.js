@@ -702,21 +702,69 @@ function onlineCharacter(){
 
 async function onlineCreate(){
 
+  log("オンラインPvPを開始しています……");
+
   if(!window.firebaseDB){
     return log("Firebaseが読み込まれていません。","error");
   }
 
+  log("Firebase接続OK");
+
   const character=onlineCharacter();
-  if(!character)return;
+
+  if(!character){
+    return log("キャラクターがありません。","error");
+  }
+
+  log("キャラクター確認OK");
 
   const code=makeRoomCode();
 
+  log("ルームコードを作成しました: "+code);
+
   onlineRoomCode=code;
 
-  const roomRef=window.firebaseRef(
-    window.firebaseDB,
-    "onlinePvp/"+code
-  );
+  try{
+
+    const roomRef=window.firebaseRef(
+      window.firebaseDB,
+      "onlinePvp/"+code
+    );
+
+    await window.firebaseSet(roomRef,{
+      status:"waiting",
+      turn:0,
+      players:{
+        player1:{
+          ...character,
+          connected:true
+        }
+      },
+      createdAt:Date.now()
+    });
+
+    log(
+      `オンラインPvPルームを作成しました！\n`+
+      `ルームコード: ${code}\n\n`+
+      `相手は以下を入力してください:\n`+
+      `/online_join ${code}`,
+      "success"
+    );
+
+    onlineListen(code);
+
+  }catch(e){
+
+    console.error(e);
+
+    log(
+      "ルーム作成に失敗しました。\n"+
+      e.message,
+      "error"
+    );
+
+  }
+}
 
   await window.firebaseSet(roomRef,{
     status:"waiting",
