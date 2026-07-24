@@ -114,8 +114,8 @@
 
     specialMagic:{
       name:"猫の大群",
-      damage:2222,
-      mpCost:200
+      damage:888,
+      mpCost:50
     }
   }
 };
