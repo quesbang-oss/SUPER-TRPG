@@ -56,6 +56,13 @@ const COMMANDS=[
 ["/synthesize",["/syn"],"装備合成","/synthesize 番号 番号 番号"],
   ["/enemy_list",["/el"],"敵ID一覧","/enemy_list"],
   ["/enemy_info",["/ei"],"敵情報","/enemy_info 敵ID レベル"],
+  ["/boss_list",["/bl"],"ボス・裏ボス一覧","/boss_list"],
+  ["/boss_info",["/bi"],"ボス情報","/boss_info ボスID"],
+  ["/boss_start",["/boss"],"ボス戦開始","/boss_start ボスID"],
+  ["/boss_status",["/bss"],"ボス戦状態","/boss_status"],
+  ["/boss_attack",["/ba"],"ボス戦通常攻撃","/boss_attack"],
+  ["/boss_magic",["/bm"],"ボス戦魔法・必殺技","/boss_magic 魔法名"],
+  ["/boss_run",["/br"],"ボス戦から逃走","/boss_run"],
   ["/battle_start",["/b"],"戦闘開始","/battle_start 敵ID レベル"],
   ["/battle_status",["/bs"],"戦闘状態","/battle_status"],
   ["/battle_attack",["/a"],"通常攻撃","/battle_attack"],
@@ -884,6 +891,53 @@ function enemyStats(id,lv){
   };
 }
 
+function bossList(){
+  const lines=["【ボス】"];
+  Object.entries(BOSS_DATA).forEach(([id,b])=>{
+    if(b.rank) lines.push(`${id} → ランク${b.rank} ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`);
+  });
+  lines.push("", "【裏ボス】");
+  Object.entries(BOSS_DATA).forEach(([id,b])=>{
+    if(!b.rank) lines.push(`${id} → ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`);
+  });
+  log(lines.join("\n"));
+}
+
+function bossInfo(id){
+  if(!id)return usage("/boss_info");
+  const b=BOSS_DATA[id];
+  if(!b)return log(`ボスID「${id}」がありません。\n/boss_list で確認してください。`,"error");
+  const evolution=b.evolving ? Number(save.history?.filter(x=>x===`boss:${id}:defeat`).length)||0 : 0;
+  const hp=b.hp+(b.evolving?evolution*500000:0);
+  const attack=b.attack+(b.evolving?evolution*300:0);
+  log(`${b.name}${b.rank?` ランク${b.rank}`:" 裏ボス"}\nHP ${hp}\n攻撃 ${attack}\n防御 ${b.defense}\n${b.secret?`専用技: ${b.secret}\n`:""}${b.evolving?`撃破回数: ${evolution}\n次回戦闘でHP+500000・攻撃+300`:""}`);
+}
+
+function bossStart(id){
+  if(!id)return usage("/boss_start");
+  return battleStart(id);
+}
+
+function bossStatus(){
+  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
+  return battleStatus();
+}
+
+function bossAttack(){
+  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
+  return attack();
+}
+
+function bossMagic(name){
+  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
+  return magic(name);
+}
+
+function bossRun(){
+  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
+  return run();
+}
+
 function enemyList(){
   const normal=Object.keys(ENEMIES).map(id=>`${id} → ${ENEMIES[id].name} (基礎HP ${ENEMIES[id].baseHp})`);
   const bosses=Object.keys(BOSS_DATA).map(id=>`${id} → ${BOSS_DATA[id].name} (ボスHP ${BOSS_DATA[id].hp})`);
@@ -955,10 +1009,20 @@ function finishBattle(win){
   if(win){
     if(b.enemy.boss){
       if(b.enemy.rank) {
-        for(let i=0;i<b.enemy.rank;i++) gainExp(b.enemy.nextExp||0);
-        c.level+=b.enemy.rank;
-        c.nextExp=Math.max(100,Math.floor(c.nextExp*1.35));
-        log(`🏆 ${b.enemy.name}撃破！ レベルが${b.enemy.rank}上がった！`,"success");
+        const levels=b.enemy.rank;
+        for(let i=0;i<levels;i++){
+          c.level++;
+          c.nextExp=Math.max(100,Math.floor(c.nextExp*1.35));
+          c.maxHp+=20;
+          c.hp=c.maxHp;
+          c.maxMp+=10;
+          c.mp=c.maxMp;
+          c.str+=2;
+          c.dex+=2;
+          c.int+=2;
+          c.pow+=2;
+        }
+        log(`🏆 ${b.enemy.name}撃破！ レベルが${levels}上がった！\n現在Lv.${c.level}`,"success");
       }
       save.gold+=b.enemy.gold;
       log(`💰 Gold +${b.enemy.gold}`,"success");
@@ -1819,6 +1883,8 @@ function help(){
     "★10 ラグナロク\n"+
     "\n【敵・戦闘】\n"+
     COMMANDS.filter(c=>["/enemy_list","/enemy_info","/battle_start","/battle_status","/battle_attack","/magic_cast","/battle_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
+    "\n\n【ボス・裏ボス】\n"+
+    COMMANDS.filter(c=>["/boss_list","/boss_info","/boss_start","/boss_status","/boss_attack","/boss_magic","/boss_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
     "\n\n【PvP】\n"+
     "PvP開始時にそれぞれのキャラクターのステータスをコピーします。\n"+
     "PvP中のHP・MP・装備状態の変化は元のキャラクターに影響しません。\n"+
@@ -1856,6 +1922,13 @@ function execute(raw){
   );
     case"/enemy_list":return enemyList();
     case"/enemy_info":return enemyInfo(p[0],p[1]);
+    case"/boss_list":return bossList();
+    case"/boss_info":return bossInfo(p[0]);
+    case"/boss_start":return bossStart(p[0]);
+    case"/boss_status":return bossStatus();
+    case"/boss_attack":return bossAttack();
+    case"/boss_magic":return bossMagic(p.join(" "));
+    case"/boss_run":return bossRun();
     case"/battle_start":return battleStart(p[0],p[1]);
     case"/battle_status":return battleStatus();
     case"/battle_attack":return attack();
