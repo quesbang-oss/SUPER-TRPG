@@ -79,15 +79,34 @@
        ここに追加するだけでSecret装備を増やせます
     ========================================= */
     const SECRET_EQUIPMENT={
-      "dragon_soul":{
-        name:"大魔神の予言書",type:"weapon",stars:"SECRET",bonus:100,maxLevel:5,
-        specialMagic:{name:"ゲプトラダムスの大間違い",damage:1000,mpCost:100}
-      },
-      "world_end":{
-        name:"スルパルチュールブレイカー",type:"weapon",stars:"SECRET",bonus:150,maxLevel:5,
-        specialMagic:{name:"猫の大群",damage:2222,mpCost:200}
-      }
-    };
+  "dragon_soul":{
+    name:"大魔神の予言書",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:100,
+    maxLevel:5,
+
+    specialMagic:{
+      name:"ゲプトラダムスの大間違い",
+      damage:1000,
+      mpCost:100
+    }
+  },
+
+  "world_end":{
+    name:"スルパルチュールブレイカー",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:222,
+    maxLevel:5,
+
+    specialMagic:{
+      name:"猫の大群",
+      damage:2222,
+      mpCost:200
+    }
+  }
+};
 
     const SECRET_SYNTHESIS_CHANCE=0.10;
 
