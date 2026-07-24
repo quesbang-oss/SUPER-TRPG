@@ -1503,10 +1503,20 @@ async function onlineAttack(){
 
   const me=room.players[meId];
   const enemy=room.players[enemyId];
-  const damage=normalDamageAgainst(
-    {defense:0},
-    me,
-    getEquipmentBonus(me.equipment?.weapon)
+  const weaponBonus =
+  getEquipmentBonus(me.equipment?.weapon);
+
+const armorBonus =
+  getEquipmentBonus(enemy.equipment?.armor);
+
+const damage =
+  Math.max(
+    1,
+    normalDamageAgainst(
+      {defense:armorBonus},
+      me,
+      weaponBonus
+    )
   );
   const newHp=Math.max(0,enemy.hp-damage);
 
@@ -1535,7 +1545,10 @@ async function onlineMagic(name){
   }
 
   if(!onlineRoomCode){
-    return log("オンラインPvP中ではありません。","error");
+    return log(
+      "オンラインPvP中ではありません。",
+      "error"
+    );
   }
 
   const roomRef=window.firebaseRef(
@@ -1543,11 +1556,19 @@ async function onlineMagic(name){
     "onlinePvp/"+onlineRoomCode
   );
 
-  const snapshot=await window.firebaseGet(roomRef);
+  const snapshot=
+    await window.firebaseGet(roomRef);
 
   if(!snapshot.exists())return;
 
   const room=snapshot.val();
+
+  if(room.status!=="battle"){
+    return log(
+      "現在、戦闘中ではありません。",
+      "warn"
+    );
+  }
 
   const ids=getOnlinePlayer(room);
 
@@ -1560,21 +1581,28 @@ async function onlineMagic(name){
     (room.turn===1&&meId==="player2");
 
   if(!myTurn){
-    return log("相手のターンです。","warn");
+    return log(
+      "相手のターンです。",
+      "warn"
+    );
   }
 
   const me=room.players[meId];
   const enemy=room.players[enemyId];
 
   const weapon=me.equipment?.weapon;
-  const special=getSpecialName(weapon);
+
+  const special=
+    getSpecialName(weapon);
 
   const isSpecial=
-    special&&name.trim()===special;
+    special &&
+    name.trim()===special;
 
-  const cost=isSpecial
-    ? getSpecialMpCost(weapon)
-    : 10;
+  const cost=
+    isSpecial
+      ? getSpecialMpCost(weapon)
+      : 10;
 
   if(me.mp<cost){
     return log(
@@ -1583,39 +1611,52 @@ async function onlineMagic(name){
     );
   }
 
+  const armorBonus=
+    getEquipmentBonus(
+      enemy.equipment?.armor
+    );
+
   let damage;
 
   if(isSpecial){
 
-    // SECRET必殺技
     if(weapon?.rarity==="SECRET"){
 
-      damage=getSpecialDamage(weapon);
+      damage=Math.max(
+        1,
+        getSpecialDamage(weapon)
+        -Math.floor(armorBonus*0.15)
+      );
 
     }else{
 
-      // 通常の★1～★10必殺技
-      damage=
+      damage=Math.max(
+        1,
         normalDamageAgainst(
-          {defense:0},
+          {defense:armorBonus},
           me,
           getEquipmentBonus(weapon)
-        )*3;
+        )*3
+      );
 
     }
 
   }else{
 
-    // 通常魔法
     damage=Math.max(
       1,
-      rand(18,35)+me.int
+      rand(18,35)
+      +me.int
+      -Math.floor(armorBonus*0.15)
     );
 
   }
 
   const newHp=
-    Math.max(0,enemy.hp-damage);
+    Math.max(
+      0,
+      enemy.hp-damage
+    );
 
   const newMp=
     me.mp-cost;
@@ -1644,36 +1685,6 @@ async function onlineMagic(name){
     updates
   );
 
-  log(
-
-    isSpecial
-      ? `✨ 必殺技「${special}」！ ${damage}ダメージ！`
-      : `${name}！ ${damage}ダメージ！`,
-
-    "success"
-
-  );
-
-}
-
-  const damage=isSpecial
-    ? normalDamageAgainst({defense:0},me,getEquipmentBonus(weapon))*3
-    : Math.max(1,rand(18,35)+me.int);
-
-  const newHp=Math.max(0,enemy.hp-damage);
-  const newMp=me.mp-cost;
-  const updates={};
-  updates[`players/${meId}/mp`]=newMp;
-  updates[`players/${enemyId}/hp`]=newHp;
-
-  if(newHp<=0){
-    updates.status="finished";
-    updates.winner=me.name;
-  }else{
-    updates.turn=room.turn===0?1:0;
-  }
-
-  await window.firebaseUpdate(roomRef,updates);
   await onlineLog(
     roomRef,
     isSpecial
@@ -1681,6 +1692,7 @@ async function onlineMagic(name){
       : `${me.name}の${name}！ ${damage}ダメージ！`,
     "success"
   );
+
 }
 
 async function onlineStatus(){
