@@ -1530,7 +1530,9 @@ async function onlineAttack(){
 
 async function onlineMagic(name){
 
-  if(!name)return usage("/online_magic");
+  if(!name){
+    return usage("/online_magic");
+  }
 
   if(!onlineRoomCode){
     return log("オンラインPvP中ではありません。","error");
@@ -1542,31 +1544,117 @@ async function onlineMagic(name){
   );
 
   const snapshot=await window.firebaseGet(roomRef);
+
   if(!snapshot.exists())return;
 
   const room=snapshot.val();
-  if(room.status!=="battle")return log("現在、戦闘中ではありません。","warn");
 
   const ids=getOnlinePlayer(room);
+
   if(!ids)return;
 
   const [meId,enemyId]=ids;
+
   const myTurn=
     (room.turn===0&&meId==="player1")||
     (room.turn===1&&meId==="player2");
 
-  if(!myTurn)return log("相手のターンです。","warn");
+  if(!myTurn){
+    return log("相手のターンです。","warn");
+  }
 
   const me=room.players[meId];
   const enemy=room.players[enemyId];
+
   const weapon=me.equipment?.weapon;
   const special=getSpecialName(weapon);
-  const isSpecial=special&&name.trim()===special;
-  const cost=isSpecial?20:10;
+
+  const isSpecial=
+    special&&name.trim()===special;
+
+  const cost=isSpecial
+    ? getSpecialMpCost(weapon)
+    : 10;
 
   if(me.mp<cost){
-    return log(`MPが足りません。必要MP: ${cost}`,"error");
+    return log(
+      `MPが足りません。必要MP: ${cost}`,
+      "error"
+    );
   }
+
+  let damage;
+
+  if(isSpecial){
+
+    // SECRET必殺技
+    if(weapon?.rarity==="SECRET"){
+
+      damage=getSpecialDamage(weapon);
+
+    }else{
+
+      // 通常の★1～★10必殺技
+      damage=
+        normalDamageAgainst(
+          {defense:0},
+          me,
+          getEquipmentBonus(weapon)
+        )*3;
+
+    }
+
+  }else{
+
+    // 通常魔法
+    damage=Math.max(
+      1,
+      rand(18,35)+me.int
+    );
+
+  }
+
+  const newHp=
+    Math.max(0,enemy.hp-damage);
+
+  const newMp=
+    me.mp-cost;
+
+  const updates={};
+
+  updates[`players/${meId}/mp`]=newMp;
+  updates[`players/${enemyId}/hp`]=newHp;
+
+  if(newHp<=0){
+
+    updates.status="finished";
+    updates.winner=me.name;
+
+  }else{
+
+    updates.turn=
+      room.turn===0
+        ? 1
+        : 0;
+
+  }
+
+  await window.firebaseUpdate(
+    roomRef,
+    updates
+  );
+
+  log(
+
+    isSpecial
+      ? `✨ 必殺技「${special}」！ ${damage}ダメージ！`
+      : `${name}！ ${damage}ダメージ！`,
+
+    "success"
+
+  );
+
+}
 
   const damage=isSpecial
     ? normalDamageAgainst({defense:0},me,getEquipmentBonus(weapon))*3
