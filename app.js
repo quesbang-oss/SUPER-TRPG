@@ -45,7 +45,7 @@ const COMMANDS=[
   ["/pvp_attack",["/pa"],"PvP通常攻撃","/pvp_attack"],
   ["/pvp_magic",["/pm"],"PvP魔法・必殺技","/pvp_magic 魔法名"],
   ["/pvp_status",["/ps"],"PvP状態","/pvp_status"],
-    ["/pvp_end",["/pe"],"PvP終了","/pvp_end"],
+  ["/pvp_end",["/pe"],"PvP終了","/pvp_end"],
 
   ["/online_create",["/oc"],"オンラインPvPルーム作成","/online_create"],
   ["/online_join",["/oj"],"オンラインPvP参加","/online_join ルームコード"],
@@ -730,41 +730,6 @@ async function onlineCreate(){
       window.firebaseDB,
       "onlinePvp/"+code
     );
-
-    await window.firebaseSet(roomRef,{
-      status:"waiting",
-      turn:0,
-      players:{
-        player1:{
-          ...character,
-          connected:true
-        }
-      },
-      createdAt:Date.now()
-    });
-
-    log(
-      `オンラインPvPルームを作成しました！\n`+
-      `ルームコード: ${code}\n\n`+
-      `相手は以下を入力してください:\n`+
-      `/online_join ${code}`,
-      "success"
-    );
-
-    onlineListen(code);
-
-  }catch(e){
-
-    console.error(e);
-
-    log(
-      "ルーム作成に失敗しました。\n"+
-      e.message,
-      "error"
-    );
-
-  }
-}
 
   await window.firebaseSet(roomRef,{
     status:"waiting",
