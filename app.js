@@ -1150,8 +1150,15 @@ function execute(raw){
     case"/pvp_magic":return pvpMagic(p.join(" "));
     case"/pvp_status":return pvpStatus();
     case"/pvp_end":
-          case"/online_create":
-      return onlineCreate();
+  if(!save.pvp){
+    return usage("/pvp_start","PvP中ではありません。");
+  }
+  save.pvp=null;
+  persist();
+  return log("PvPを終了しました。");
+
+case"/online_create":
+  return onlineCreate();
 
     case"/online_join":
       return onlineJoin(p[0]);
