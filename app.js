@@ -731,29 +731,41 @@ async function onlineCreate(){
       "onlinePvp/"+code
     );
 
-  await window.firebaseSet(roomRef,{
-    status:"waiting",
-    turn:0,
-    players:{
-      player1:{
-        ...character,
-        connected:true
-      }
-    },
-    createdAt:Date.now()
-  });
+    await window.firebaseSet(roomRef,{
+      status:"waiting",
+      turn:0,
+      players:{
+        player1:{
+          ...character,
+          connected:true
+        }
+      },
+      createdAt:Date.now()
+    });
 
-  log(
-    `オンラインPvPルームを作成しました！\n`+
-    `ルームコード: ${code}\n\n`+
-    `相手は以下を入力してください:\n`+
-    `/online_join ${code}`,
-    "success"
-  );
+    log(
+      `オンラインPvPルームを作成しました！\n`+
+      `ルームコード: ${code}\n\n`+
+      `相手は以下を入力してください:\n`+
+      `/online_join ${code}`,
+      "success"
+    );
 
-  onlineListen(code);
+    onlineListen(code);
+
+  }catch(e){
+
+    console.error(e);
+
+    log(
+      "オンラインPvPルームの作成に失敗しました。\n"+
+      e.message,
+      "error"
+    );
+
+  }
+
 }
-
 async function onlineJoin(code){
 
   if(!window.firebaseDB){
