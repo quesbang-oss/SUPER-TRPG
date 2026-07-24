@@ -231,27 +231,14 @@ const $=s=>document.querySelector(s);
 function log(msg,type="system"){
   const e=document.createElement("div");
   e.className="line "+type;
-
-  // 改行を確実に表示
-  function log(msg,type="system"){
-  const e=document.createElement("div");
-  e.className="line "+type;
-
-  e.textContent = String(msg)
-    .replace(/\\n/g, "\n")
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n");
-
-  e.style.whiteSpace = "pre-wrap";
-
+  e.textContent=String(msg)
+    .replace(/\\n/g,"\n")
+    .replace(/\r\n/g,"\n")
+    .replace(/\r/g,"\n");
+  e.style.whiteSpace="pre-wrap";
   $("#output").appendChild(e);
   $("#output").scrollTop=$("#output").scrollHeight;
 }
-
-  $("#output").appendChild(e);
-  $("#output").scrollTop=$("#output").scrollHeight;
-}
-
 function persist(){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(save));
@@ -329,8 +316,8 @@ MP ${c.mp}/${c.maxMp}
 STR ${c.str} DEX ${c.dex} INT ${c.int} POW ${c.pow}
 所持金: ${save.gold}
 アイテム: 回復薬 ${save.inventory.potion} / 魔力薬 ${save.inventory.ether}
-武器: ${w?`★${w.stars} ${w.name} Lv.${getEquipmentLevel(w)}/5 攻撃+${getEquipmentBonus(w)} 必殺技: ${getSpecialName(w)||"未解放"}`:"なし"}
-防具: ${a?`★${a.stars} ${a.name} Lv.${getEquipmentLevel(a)}/5 防御+${getEquipmentBonus(a)}`:"なし"}`
+武器: ${w?`★${w.stars} ${w.name} Lv.${getEquipmentLevel(w)}${w.rarity==="SECRET"?"":"/5"} 攻撃+${getEquipmentBonus(w)} 必殺技: ${getSpecialName(w)||"未解放"}`:"なし"}
+防具: ${a?`★${a.stars} ${a.name} Lv.${getEquipmentLevel(a)}${a.rarity==="SECRET"?"":"/5"} 防御+${getEquipmentBonus(a)}`:"なし"}`
   );
 }
 
@@ -592,14 +579,14 @@ function itemList(){
     lines.push(
       "装備品:",
       ...inv.items.map((x,i)=>
-        `${i+1}. ${x.type==="weapon"?"武器":"防具"} ★${x.stars} ${x.name} Lv.${getEquipmentLevel(x)}/5 `+
+        `${i+1}. ${x.type==="weapon"?"武器":"防具"} ★${x.stars} ${x.name} Lv.${getEquipmentLevel(x)}${x.rarity==="SECRET"?"":"/5"} `+
         `${x.type==="weapon"?"攻撃補正":"防御補正"}+${getEquipmentBonus(x)} `+
         `${getSpecialName(x)?`必殺技:${getSpecialName(x)}`:""}`
       )
     );
   }else lines.push("装備品: なし");
-  lines.push(`現在の武器: ${eq.weapon?`★${eq.weapon.stars} ${eq.weapon.name}（Lv.${getEquipmentLevel(eq.weapon)}/5 攻撃補正+${getEquipmentBonus(eq.weapon)}）`:"なし"}`);
-  lines.push(`現在の防具: ${eq.armor?`★${eq.armor.stars} ${eq.armor.name}（Lv.${getEquipmentLevel(eq.armor)}/5 防御補正+${getEquipmentBonus(eq.armor)}）`:"なし"}`);
+  lines.push(`現在の武器: ${eq.weapon?`★${eq.weapon.stars} ${eq.weapon.name}（Lv.${getEquipmentLevel(eq.weapon)}${eq.weapon.rarity==="SECRET"?"":"/5"} 攻撃補正+${getEquipmentBonus(eq.weapon)}）`:"なし"}`);
+  lines.push(`現在の防具: ${eq.armor?`★${eq.armor.stars} ${eq.armor.name}（Lv.${getEquipmentLevel(eq.armor)}${eq.armor.rarity==="SECRET"?"":"/5"} 防御補正+${getEquipmentBonus(eq.armor)}）`:"なし"}`);
   log(lines.join("\n"));
 }
 
@@ -868,7 +855,6 @@ function synthesizeItems(index1,index2,index3){
 
         level:0,
 
-        maxLevel:secret.maxLevel,
 
         specialMagic:{
           ...secret.specialMagic
@@ -887,7 +873,7 @@ function synthesizeItems(index1,index2,index3){
         `${newItem.name}\n`+
         `スペシャルマジック: `+
         `${newItem.specialMagic.name}\n`+
-        `Lv.${newItem.maxLevel}で解放\n`+
+        `Lv.1から使用可能（レベル上限なし）\n`+
         `ダメージ: `+
         `${newItem.specialMagic.damage}\n`+
         `MP消費: `+
@@ -2000,12 +1986,12 @@ function help(){
     "☆10の武器・防具は装備でき、/item_use 番号で消費すると最大HP+100・最大MP+50。消費時に装備中の防具補正+10、武器補正+1。\n"+
     "\n【武器・防具の成長】\n"+
     "装備中の武器・防具は敵を倒すたびに撃破数+1。\n"+
-    "10体撃破ごとに装備Lv+1、最大Lv.5（50体）です。\n"+
+    "10体撃破ごとに装備Lv+1。通常装備は最大Lv.5、SECRET装備はレベル上限なしです。\n"+
     "補正値は「★の数×装備Lv」です。\n"+
     "例：★3・Lv.5 → 補正+15 / ★10・Lv.5 → 補正+50。\n"+
     "\n【必殺技】\n"+
     "通常装備はLv.5で必殺技が解放されます。SECRET装備はLv.1から必殺技が解放され、レベル上限なし。\n"+
-    "SECRETは1レベル上がるごとに必殺技威力と補正値が1.1倍。\n"+
+    "SECRETは1レベル上がるごとに必殺技威力と補正値が1.1倍（レベル上限なし）。\n"+
     "/magic_cast 必殺技名 で発動。通常攻撃の3倍ダメージ、MP20消費。\n"+
     "★1 ブレイクスラッシュ\n"+
     "★2 ツインエッジ\n"+
@@ -2094,10 +2080,6 @@ case"/online_create":
 
     case"/online_end":
       return onlineEnd();
-      if(!save.pvp)return usage("/pvp_start","PvP中ではありません。");
-      save.pvp=null;
-      persist();
-      return log("PvPを終了しました。");
     case"/save":persist();return log("保存しました。","success");
     case"/load":save=load();render();return log("読み込みました。","success");
     case"/clear":$("#output").innerHTML="";return;
