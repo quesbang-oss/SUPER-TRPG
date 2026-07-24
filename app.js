@@ -105,7 +105,7 @@ const SECRET_EQUIPMENT={
     }
   },
   "world_end":{
-    name:"スルパルチュールブレイカー",
+    name:"スーパーチュールブレイカー",
     type:"weapon",
     stars:"SECRET",
     bonus:222,
