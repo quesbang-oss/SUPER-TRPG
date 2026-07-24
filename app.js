@@ -447,7 +447,6 @@ function enemyInfo(id,lv){
 
 function battleStart(id,lv){
   if(!id)return usage("/battle_start");
-  if(save.battle)return log("すでに戦闘中です。先に戦闘を終了してください。","warn");
   if(!ENEMIES[id])return log(`敵ID「${id}」がありません。\n/enemy_list で確認してください。`,"error");
   if(!save.character)return usage("/char_create","先にキャラクターを作成してください。");
   const e=enemyStats(id,lv||1);
@@ -591,7 +590,6 @@ function cloneForPvP(character){
 
 function pvpStart(a,b){
   if(!a||!b)return usage("/pvp_start");
-  if(save.pvp)return log("すでにPvP中です。","warn");
   const p1=save.characters.find(c=>c.name===a)||save.characters[Number(a)-1];
   const p2=save.characters.find(c=>c.name===b)||save.characters[Number(b)-1];
   if(!p1||!p2)return log("PvP参加キャラクターが見つかりません。/char_listで確認してください。","error");
@@ -669,6 +667,7 @@ function pvpMagic(n){
 
 let onlineRoomCode=null;
 let onlineUnsubscribe=null;
+let onlineLogSeen=new Set();
 
 /*
   オンラインPvP専用のプレイヤーID
@@ -696,7 +695,6 @@ function makeRoomCode(){
 }
 
 function onlineCharacter(){
-
   if(!save.character){
     log("先にキャラクターを作成してください。","error");
     return null;
@@ -712,22 +710,15 @@ function onlineCharacter(){
     name:c.name,
     level:c.level,
     exp:c.exp,
-
     maxHp:c.maxHp,
     hp:c.hp,
-
     maxMp:c.maxMp,
     mp:c.mp,
-
     str:c.str,
     dex:c.dex,
     int:c.int,
     pow:c.pow,
-
-    equipment:{
-      weapon:normalizeItem(save.equipment?.weapon),
-      armor:normalizeItem(save.equipment?.armor)
-    }
+    equipment:c.equipment||{}
   };
 }
 
@@ -773,8 +764,15 @@ async function onlineCreate(){
             connected:true
           }
       },
+      logs:{},
       createdAt:Date.now()
     });
+
+    await onlineLog(
+      roomRef,
+      `${character.name} がオンラインPvPルームを作成しました。`,
+      "success"
+    );
 
     log(
       `オンラインPvPルームを作成しました！\n`+
@@ -800,8 +798,6 @@ async function onlineCreate(){
 
 }
 async function onlineJoin(code){
-
-  try{
 
   if(!window.firebaseDB){
     return log(
@@ -887,10 +883,35 @@ async function onlineJoin(code){
 
   onlineListen(onlineRoomCode);
 
-  }catch(e){
-    console.error(e);
-    log("オンラインPvPへの参加に失敗しました。\n"+e.message,"error");
-  }
+  await onlineLog(
+    roomRef,
+    `${character.name} がオンラインPvPに参加しました！`,
+    "success"
+  );
+
+}
+
+function onlineLog(roomRef,message,type="system"){
+  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  const key=`logs/${id}`;
+  return window.firebaseUpdate(roomRef,{
+    [key]:{
+      message:String(message),
+      type,
+      createdAt:Date.now()
+    }
+  });
+}
+
+function onlineRenderLogs(room){
+  const logs=room.logs||{};
+  Object.entries(logs)
+    .sort((a,b)=>(a[1].createdAt||0)-(b[1].createdAt||0))
+    .forEach(([id,item])=>{
+      if(onlineLogSeen.has(id))return;
+      onlineLogSeen.add(id);
+      log(item.message,item.type||"system");
+    });
 }
 
 function onlineListen(code){
@@ -898,6 +919,8 @@ function onlineListen(code){
   if(onlineUnsubscribe){
     onlineUnsubscribe();
   }
+
+  onlineLogSeen=new Set();
 
   const roomRef=window.firebaseRef(
     window.firebaseDB,
@@ -914,16 +937,19 @@ function onlineListen(code){
       }
 
       const room=snapshot.val();
+      onlineRenderLogs(room);
 
       if(room.status==="battle"){
         logOnlineStatus(room);
       }
 
       if(room.status==="finished"){
-        log(
-          `🏆 ${room.winner} の勝利！`,
-          "success"
-        );
+        const winnerLog=`🏆 ${room.winner} の勝利！`;
+        const finishId="__finished__";
+        if(!onlineLogSeen.has(finishId)){
+          onlineLogSeen.add(finishId);
+          log(winnerLog,"success");
+        }
       }
     }
   );
@@ -986,6 +1012,7 @@ async function onlineAttack(){
   if(!snapshot.exists())return;
 
   const room=snapshot.val();
+  if(room.status!=="battle")return log("現在、戦闘中ではありません。","warn");
 
   const ids=getOnlinePlayer(room);
 
@@ -1005,44 +1032,34 @@ async function onlineAttack(){
 
   const me=room.players[meId];
   const enemy=room.players[enemyId];
-
-  const weaponBonus=
-    getEquipmentBonus(me.equipment?.weapon);
-
-  const damage=
-    normalDamageAgainst(
-      {defense:0},
-      me,
-      weaponBonus
-    );
-
+  const damage=normalDamageAgainst(
+    {defense:0},
+    me,
+    getEquipmentBonus(me.equipment?.weapon)
+  );
   const newHp=Math.max(0,enemy.hp-damage);
 
   const updates={};
-
   updates[`players/${enemyId}/hp`]=newHp;
 
   if(newHp<=0){
-
     updates.status="finished";
     updates.winner=me.name;
-
   }else{
-
     updates.turn=room.turn===0?1:0;
-
   }
 
   await window.firebaseUpdate(roomRef,updates);
-
-  log(`${me.name}の攻撃！ ${damage}ダメージ。`);
+  await onlineLog(
+    roomRef,
+    `${me.name}の攻撃！ ${damage}ダメージ。`,
+    "system"
+  );
 }
 
 async function onlineMagic(name){
 
-  if(!name){
-    return usage("/online_magic");
-  }
+  if(!name)return usage("/online_magic");
 
   if(!onlineRoomCode){
     return log("オンラインPvP中ではありません。","error");
@@ -1054,34 +1071,26 @@ async function onlineMagic(name){
   );
 
   const snapshot=await window.firebaseGet(roomRef);
-
   if(!snapshot.exists())return;
 
   const room=snapshot.val();
+  if(room.status!=="battle")return log("現在、戦闘中ではありません。","warn");
 
   const ids=getOnlinePlayer(room);
-
   if(!ids)return;
 
   const [meId,enemyId]=ids;
-
   const myTurn=
     (room.turn===0&&meId==="player1")||
     (room.turn===1&&meId==="player2");
 
-  if(!myTurn){
-    return log("相手のターンです。","warn");
-  }
+  if(!myTurn)return log("相手のターンです。","warn");
 
   const me=room.players[meId];
   const enemy=room.players[enemyId];
-
   const weapon=me.equipment?.weapon;
   const special=getSpecialName(weapon);
-
-  const isSpecial=
-    special&&name.trim()===special;
-
+  const isSpecial=special&&name.trim()===special;
   const cost=isSpecial?20:10;
 
   if(me.mp<cost){
@@ -1089,38 +1098,28 @@ async function onlineMagic(name){
   }
 
   const damage=isSpecial
-    ? normalDamageAgainst(
-        {defense:0},
-        me,
-        getEquipmentBonus(weapon)
-      )*3
+    ? normalDamageAgainst({defense:0},me,getEquipmentBonus(weapon))*3
     : Math.max(1,rand(18,35)+me.int);
 
   const newHp=Math.max(0,enemy.hp-damage);
   const newMp=me.mp-cost;
-
   const updates={};
-
   updates[`players/${meId}/mp`]=newMp;
   updates[`players/${enemyId}/hp`]=newHp;
 
   if(newHp<=0){
-
     updates.status="finished";
     updates.winner=me.name;
-
   }else{
-
     updates.turn=room.turn===0?1:0;
-
   }
 
   await window.firebaseUpdate(roomRef,updates);
-
-  log(
+  await onlineLog(
+    roomRef,
     isSpecial
-      ? `✨ 必殺技「${special}」！ ${damage}ダメージ！`
-      : `${name}！ ${damage}ダメージ！`,
+      ? `✨ ${me.name}の必殺技「${special}」！ ${damage}ダメージ！`
+      : `${me.name}の${name}！ ${damage}ダメージ！`,
     "success"
   );
 }
@@ -1154,9 +1153,11 @@ async function onlineEnd(){
     "onlinePvp/"+onlineRoomCode
   );
 
+  await onlineLog(roomRef,"オンラインPvPを終了しました。","warn");
   await window.firebaseRemove(roomRef);
 
   onlineRoomCode=null;
+  onlineLogSeen=new Set();
 
   if(onlineUnsubscribe){
     onlineUnsubscribe();
@@ -1259,6 +1260,10 @@ case"/online_create":
 
     case"/online_end":
       return onlineEnd();
+      if(!save.pvp)return usage("/pvp_start","PvP中ではありません。");
+      save.pvp=null;
+      persist();
+      return log("PvPを終了しました。");
     case"/save":persist();return log("保存しました。","success");
     case"/load":save=load();render();return log("読み込みました。","success");
     case"/clear":$("#output").innerHTML="";return;
