@@ -94,7 +94,7 @@
   },
 "bossgdora":{
     name:"超弩級破壊兵器ボスゴドーラ",
-    type:"weapon",
+    type:"armor",
     stars:"SECRET",
     bonus:400,
     maxLevel:5,
