@@ -225,7 +225,25 @@ const SECRET_EQUIPMENT = {
   }
 };
 
+function repairSecretItemLevels() {
+  if (!currentCharacter || !currentCharacter.inventory) return;
 
+  currentCharacter.inventory.forEach(item => {
+    if (
+      item &&
+      item.stars === "SECRET" &&
+      item.specialMagic
+    ) {
+      if (typeof item.level !== "number") {
+        item.level = Number(item.level) || 1;
+      }
+
+      if (!item.specialMagicUnlockLevel) {
+        item.specialMagicUnlockLevel = 5;
+      }
+    }
+  });
+}
 
 /* =========================================
    レアリティ合成設定
@@ -1180,11 +1198,18 @@ if(isSpecial && weapon?.rarity==="SECRET"){
 
   const magicData=weapon.specialMagic;
 
+  // 必殺技解放レベルは武器本体に設定
+  // 設定がない古いデータはレベル5として扱う
   const unlockLevel=
-    Number(magicData?.unlockLevel)||5;
+    Number(
+      weapon.specialMagicUnlockLevel ??
+      magicData?.unlockLevel ??
+      5
+    );
 
+  // 古いデータでlevelが0/nullの場合の対策
   const currentLevel=
-    Number(weapon.level)||0;
+    Number(weapon.level ?? 1);
 
   if(currentLevel<unlockLevel){
 
