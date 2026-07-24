@@ -668,6 +668,27 @@ function pvpMagic(n){
 let onlineRoomCode=null;
 let onlineUnsubscribe=null;
 
+/*
+  オンラインPvP専用のプレイヤーID
+
+  キャラクターIDとは別物。
+  このブラウザのプレイヤーを識別する。
+*/
+let onlinePlayerId =
+  sessionStorage.getItem("onlinePlayerId");
+
+if(!onlinePlayerId){
+
+  onlinePlayerId =
+    crypto.randomUUID();
+
+  sessionStorage.setItem(
+    "onlinePlayerId",
+    onlinePlayerId
+  );
+
+}
+
 function makeRoomCode(){
   return Math.random().toString(36).substring(2,8).toUpperCase();
 }
@@ -736,9 +757,11 @@ async function onlineCreate(){
       turn:0,
       players:{
         player1:{
-          ...character,
-          connected:true
-        }
+            ...character,
+            // オンライン専用ID
+            onlinePlayerId:onlinePlayerId,
+            connected:true
+          }
       },
       createdAt:Date.now()
     });
@@ -769,7 +792,10 @@ async function onlineCreate(){
 async function onlineJoin(code){
 
   if(!window.firebaseDB){
-    return log("Firebaseが読み込まれていません。","error");
+    return log(
+      "Firebaseが読み込まれていません。",
+      "error"
+    );
   }
 
   if(!code){
@@ -777,43 +803,78 @@ async function onlineJoin(code){
   }
 
   const character=onlineCharacter();
+
   if(!character)return;
+
+  const roomCode=code.toUpperCase();
 
   const roomRef=window.firebaseRef(
     window.firebaseDB,
-    "onlinePvp/"+code.toUpperCase()
+    "onlinePvp/"+roomCode
   );
 
-  const snapshot=await window.firebaseGet(roomRef);
+  const snapshot=
+    await window.firebaseGet(roomRef);
 
   if(!snapshot.exists()){
-    return log("そのルームは存在しません。","error");
+    return log(
+      "そのルームは存在しません。",
+      "error"
+    );
   }
 
   const room=snapshot.val();
 
-  if(room.players?.player2){
-    return log("このルームはすでに満員です。","error");
+  // すでに戦闘中なら参加不可
+  if(room.status!=="waiting"){
+    return log(
+      "このルームはすでに開始されています。",
+      "error"
+    );
   }
 
-  onlineRoomCode=code.toUpperCase();
+  // player2がすでに存在するなら満員
+  if(room.players?.player2){
+
+    return log(
+      "このルームはすでに満員です。",
+      "error"
+    );
+
+  }
+
+  onlineRoomCode=roomCode;
 
   await window.firebaseUpdate(roomRef,{
+
     status:"battle",
+
     "players/player2":{
+
       ...character,
+
+      onlinePlayerId:
+        onlinePlayerId,
+
       connected:true
+
     },
+
     turn:0
+
   });
 
   log(
+
     "オンラインPvPに参加しました！\n"+
     "キャラクターのステータスをコピーしました。",
+
     "success"
+
   );
 
   onlineListen(onlineRoomCode);
+
 }
 
 function onlineListen(code){
@@ -854,13 +915,21 @@ function onlineListen(code){
 
 function getOnlinePlayer(room){
 
-  const myId=save.character?.id;
+  const myOnlineId=onlinePlayerId;
 
-  if(room.players?.player1?.id===myId){
+  if(
+    room.players?.player1?.onlinePlayerId
+    === myOnlineId
+  ){
+
     return ["player1","player2"];
   }
 
-  if(room.players?.player2?.id===myId){
+  if(
+    room.players?.player2?.onlinePlayerId
+    === myOnlineId
+  ){
+
     return ["player2","player1"];
   }
 
