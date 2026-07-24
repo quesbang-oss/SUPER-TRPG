@@ -45,7 +45,15 @@ const COMMANDS=[
   ["/pvp_attack",["/pa"],"PvP通常攻撃","/pvp_attack"],
   ["/pvp_magic",["/pm"],"PvP魔法・必殺技","/pvp_magic 魔法名"],
   ["/pvp_status",["/ps"],"PvP状態","/pvp_status"],
-  ["/pvp_end",["/pe"],"PvP終了","/pvp_end"],
+    ["/pvp_end",["/pe"],"PvP終了","/pvp_end"],
+
+  ["/online_create",["/oc"],"オンラインPvPルーム作成","/online_create"],
+  ["/online_join",["/oj"],"オンラインPvP参加","/online_join ルームコード"],
+  ["/online_status",["/os"],"オンラインPvP状態","/online_status"],
+  ["/online_attack",["/oa"],"オンラインPvP攻撃","/online_attack"],
+  ["/online_magic",["/om"],"オンラインPvP魔法","/online_magic 魔法名"],
+  ["/online_end",["/oe"],"オンラインPvP終了","/online_end"],
+
   ["/save",[],"保存","/save"],
   ["/load",[],"読み込み","/load"],
   ["/help",["/h","/?"],"ヘルプ","/help"],
@@ -653,7 +661,400 @@ function pvpMagic(n){
   }
   pvpNext();
 }
+/* =========================================
+   Firebase オンラインPvP
+========================================= */
 
+let onlineRoomCode=null;
+let onlineUnsubscribe=null;
+
+function makeRoomCode(){
+  return Math.random().toString(36).substring(2,8).toUpperCase();
+}
+
+function onlineCharacter(){
+  if(!save.character){
+    log("先にキャラクターを作成してください。","error");
+    return null;
+  }
+
+  const c=cloneForPvP(save.character);
+
+  c.hp=c.maxHp;
+  c.mp=c.maxMp;
+
+  return {
+    id:c.id,
+    name:c.name,
+    level:c.level,
+    exp:c.exp,
+    maxHp:c.maxHp,
+    hp:c.hp,
+    maxMp:c.maxMp,
+    mp:c.mp,
+    str:c.str,
+    dex:c.dex,
+    int:c.int,
+    pow:c.pow,
+    equipment:c.equipment||{}
+  };
+}
+
+async function onlineCreate(){
+
+  if(!window.firebaseDB){
+    return log("Firebaseが読み込まれていません。","error");
+  }
+
+  const character=onlineCharacter();
+  if(!character)return;
+
+  const code=makeRoomCode();
+
+  onlineRoomCode=code;
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+code
+  );
+
+  await window.firebaseSet(roomRef,{
+    status:"waiting",
+    turn:0,
+    players:{
+      player1:{
+        ...character,
+        connected:true
+      }
+    },
+    createdAt:Date.now()
+  });
+
+  log(
+    `オンラインPvPルームを作成しました！\n`+
+    `ルームコード: ${code}\n\n`+
+    `相手は以下を入力してください:\n`+
+    `/online_join ${code}`,
+    "success"
+  );
+
+  onlineListen(code);
+}
+
+async function onlineJoin(code){
+
+  if(!window.firebaseDB){
+    return log("Firebaseが読み込まれていません。","error");
+  }
+
+  if(!code){
+    return usage("/online_join");
+  }
+
+  const character=onlineCharacter();
+  if(!character)return;
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+code.toUpperCase()
+  );
+
+  const snapshot=await window.firebaseGet(roomRef);
+
+  if(!snapshot.exists()){
+    return log("そのルームは存在しません。","error");
+  }
+
+  const room=snapshot.val();
+
+  if(room.players?.player2){
+    return log("このルームはすでに満員です。","error");
+  }
+
+  onlineRoomCode=code.toUpperCase();
+
+  await window.firebaseUpdate(roomRef,{
+    status:"battle",
+    "players/player2":{
+      ...character,
+      connected:true
+    },
+    turn:0
+  });
+
+  log(
+    "オンラインPvPに参加しました！\n"+
+    "キャラクターのステータスをコピーしました。",
+    "success"
+  );
+
+  onlineListen(onlineRoomCode);
+}
+
+function onlineListen(code){
+
+  if(onlineUnsubscribe){
+    onlineUnsubscribe();
+  }
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+code
+  );
+
+  onlineUnsubscribe=window.firebaseOnValue(
+    roomRef,
+    snapshot=>{
+
+      if(!snapshot.exists()){
+        log("オンラインPvPルームが終了しました。","warn");
+        return;
+      }
+
+      const room=snapshot.val();
+
+      if(room.status==="battle"){
+        logOnlineStatus(room);
+      }
+
+      if(room.status==="finished"){
+        log(
+          `🏆 ${room.winner} の勝利！`,
+          "success"
+        );
+      }
+    }
+  );
+}
+
+function getOnlinePlayer(room){
+
+  const myId=save.character?.id;
+
+  if(room.players?.player1?.id===myId){
+    return ["player1","player2"];
+  }
+
+  if(room.players?.player2?.id===myId){
+    return ["player2","player1"];
+  }
+
+  return null;
+}
+
+function logOnlineStatus(room){
+
+  const p1=room.players?.player1;
+  const p2=room.players?.player2;
+
+  if(!p1||!p2){
+    log("相手の参加を待っています……");
+    return;
+  }
+
+  log(
+    `【オンラインPvP】\n`+
+    `${p1.name}: HP ${p1.hp}/${p1.maxHp} MP ${p1.mp}/${p1.maxMp}\n`+
+    `${p2.name}: HP ${p2.hp}/${p2.maxHp} MP ${p2.mp}/${p2.maxMp}\n`+
+    `現在のターン: ${room.turn===0?p1.name:p2.name}`
+  );
+}
+
+async function onlineAttack(){
+
+  if(!onlineRoomCode){
+    return log("オンラインPvP中ではありません。","error");
+  }
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+onlineRoomCode
+  );
+
+  const snapshot=await window.firebaseGet(roomRef);
+
+  if(!snapshot.exists())return;
+
+  const room=snapshot.val();
+
+  const ids=getOnlinePlayer(room);
+
+  if(!ids){
+    return log("自分のキャラクターが見つかりません。","error");
+  }
+
+  const [meId,enemyId]=ids;
+
+  const myTurn=
+    (room.turn===0&&meId==="player1")||
+    (room.turn===1&&meId==="player2");
+
+  if(!myTurn){
+    return log("相手のターンです。","warn");
+  }
+
+  const me=room.players[meId];
+  const enemy=room.players[enemyId];
+
+  const weaponBonus=
+    getEquipmentBonus(me.equipment?.weapon);
+
+  const damage=
+    normalDamageAgainst(
+      {defense:0},
+      me,
+      weaponBonus
+    );
+
+  const newHp=Math.max(0,enemy.hp-damage);
+
+  const updates={};
+
+  updates[`players/${enemyId}/hp`]=newHp;
+
+  if(newHp<=0){
+
+    updates.status="finished";
+    updates.winner=me.name;
+
+  }else{
+
+    updates.turn=room.turn===0?1:0;
+
+  }
+
+  await window.firebaseUpdate(roomRef,updates);
+
+  log(`${me.name}の攻撃！ ${damage}ダメージ。`);
+}
+
+async function onlineMagic(name){
+
+  if(!name){
+    return usage("/online_magic");
+  }
+
+  if(!onlineRoomCode){
+    return log("オンラインPvP中ではありません。","error");
+  }
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+onlineRoomCode
+  );
+
+  const snapshot=await window.firebaseGet(roomRef);
+
+  if(!snapshot.exists())return;
+
+  const room=snapshot.val();
+
+  const ids=getOnlinePlayer(room);
+
+  if(!ids)return;
+
+  const [meId,enemyId]=ids;
+
+  const myTurn=
+    (room.turn===0&&meId==="player1")||
+    (room.turn===1&&meId==="player2");
+
+  if(!myTurn){
+    return log("相手のターンです。","warn");
+  }
+
+  const me=room.players[meId];
+  const enemy=room.players[enemyId];
+
+  const weapon=me.equipment?.weapon;
+  const special=getSpecialName(weapon);
+
+  const isSpecial=
+    special&&name.trim()===special;
+
+  const cost=isSpecial?20:10;
+
+  if(me.mp<cost){
+    return log(`MPが足りません。必要MP: ${cost}`,"error");
+  }
+
+  const damage=isSpecial
+    ? normalDamageAgainst(
+        {defense:0},
+        me,
+        getEquipmentBonus(weapon)
+      )*3
+    : Math.max(1,rand(18,35)+me.int);
+
+  const newHp=Math.max(0,enemy.hp-damage);
+  const newMp=me.mp-cost;
+
+  const updates={};
+
+  updates[`players/${meId}/mp`]=newMp;
+  updates[`players/${enemyId}/hp`]=newHp;
+
+  if(newHp<=0){
+
+    updates.status="finished";
+    updates.winner=me.name;
+
+  }else{
+
+    updates.turn=room.turn===0?1:0;
+
+  }
+
+  await window.firebaseUpdate(roomRef,updates);
+
+  log(
+    isSpecial
+      ? `✨ 必殺技「${special}」！ ${damage}ダメージ！`
+      : `${name}！ ${damage}ダメージ！`,
+    "success"
+  );
+}
+
+async function onlineStatus(){
+
+  if(!onlineRoomCode){
+    return log("オンラインPvP中ではありません。","error");
+  }
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+onlineRoomCode
+  );
+
+  const snapshot=await window.firebaseGet(roomRef);
+
+  if(snapshot.exists()){
+    logOnlineStatus(snapshot.val());
+  }
+}
+
+async function onlineEnd(){
+
+  if(!onlineRoomCode){
+    return log("オンラインPvP中ではありません。","error");
+  }
+
+  const roomRef=window.firebaseRef(
+    window.firebaseDB,
+    "onlinePvp/"+onlineRoomCode
+  );
+
+  await window.firebaseRemove(roomRef);
+
+  onlineRoomCode=null;
+
+  if(onlineUnsubscribe){
+    onlineUnsubscribe();
+    onlineUnsubscribe=null;
+  }
+
+  log("オンラインPvPを終了しました。");
+}
 function help(){
   log(
     "【キャラクター】\n"+
@@ -724,6 +1125,23 @@ function execute(raw){
     case"/pvp_magic":return pvpMagic(p.join(" "));
     case"/pvp_status":return pvpStatus();
     case"/pvp_end":
+          case"/online_create":
+      return onlineCreate();
+
+    case"/online_join":
+      return onlineJoin(p[0]);
+
+    case"/online_status":
+      return onlineStatus();
+
+    case"/online_attack":
+      return onlineAttack();
+
+    case"/online_magic":
+      return onlineMagic(p.join(" "));
+
+    case"/online_end":
+      return onlineEnd();
       if(!save.pvp)return usage("/pvp_start","PvP中ではありません。");
       save.pvp=null;
       persist();
