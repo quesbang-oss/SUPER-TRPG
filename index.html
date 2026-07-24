@@ -20,6 +20,47 @@
 <small>「/」で候補　↑↓選択　Tab補完　Enter実行</small>
 </section>
 </div>
+
+<!-- Firebaseを追加：app.jsより前に置く -->
+<script type="module">
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+  import {
+    getDatabase,
+    ref,
+    set,
+    get,
+    update,
+    onValue,
+    remove
+  } from
+    "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+  // Firebase Consoleから取得した設定をここに貼る
+  const firebaseConfig = {
+    apiKey: "AIzaSyDuWTYGj8aeQvs1ulbhW1pxPmAJ195wTZg",
+    authDomain: "trpg-c798c.firebaseapp.com",
+    databaseURL: "https://console.firebase.google.com/u/0/project/trpg-c798c/database/trpg-c798c-default-rtdb/data/~2F?hl=ja",
+    projectId: "trpg-c798c",
+    storageBucket: "trpg-c798c.firebasestorage.app",
+    messagingSenderId: "395870734652",
+    appId: "1:395870734652:web:fd987c041ac037708e7639"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const database = getDatabase(firebaseApp);
+
+  // app.jsから使えるようにする
+  window.firebaseDB = database;
+  window.firebaseRef = ref;
+  window.firebaseSet = set;
+  window.firebaseGet = get;
+  window.firebaseUpdate = update;
+  window.firebaseOnValue = onValue;
+  window.firebaseRemove = remove;
+</script>
+
 <script src="app.js"></script>
 </body>
 </html>
