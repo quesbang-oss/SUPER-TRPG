@@ -289,19 +289,26 @@ let save=load();
 
 const $=s=>document.querySelector(s);
 
-function log(msg,type="system"){
-  const e=document.createElement("div");
-  e.className="line "+type;
+function log(msg, type = "system") {
+  const output = document.getElementById("output");
 
-  // 改行を確実に表示
-  e.innerHTML = String(msg)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/\n/g,"<br>");
+  if (!output) {
+    console.error("ログ表示欄 #output が見つかりません");
+    return;
+  }
 
-  $("#output").appendChild(e);
-  $("#output").scrollTop=$("#output").scrollHeight;
+  const e = document.createElement("div");
+  e.className = "line " + type;
+
+  e.textContent = String(msg)
+    .replace(/\\n/g, "\n")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
+
+  e.style.whiteSpace = "pre-wrap";
+
+  output.appendChild(e);
+  output.scrollTop = output.scrollHeight;
 }
 
 function persist(){
