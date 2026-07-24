@@ -335,10 +335,15 @@
     }
 
     function getEquipmentBonus(item){
-      if(!item)return 0;
-      if(item.rarity==="SECRET")return Number(item.bonus)||0;
-      return getEquipmentLevel(item)*Number(item.stars||0);
-    }
+
+  if(!item)return 0;
+
+  if(item.rarity==="SECRET"){
+    return Number(item.bonus)||0;
+  }
+
+  return getEquipmentLevel(item)*item.stars;
+}
 
     function getSpecialName(item){
       if(!item)return null;
