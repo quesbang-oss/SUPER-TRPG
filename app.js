@@ -77,67 +77,48 @@ const EQUIPMENT_SPECIALS={
    SECRETレアリティ設定
    ここを追加するだけでSecret装備を増やせる
 ========================================= */
-
-const SECRET_EQUIPMENT = {
-
-  "dragon_soul": {
-    name:"竜魂の剣",
+const SECRET_EQUIPMENT={
+  "dragon_soul":{
+    name:"大魔神の予言書",
     type:"weapon",
-
-    // ★表示
     stars:"SECRET",
-
-    // 通常攻撃への補正
     bonus:100,
-
-    // 最大レベル
-    maxLevel:5,
-
-    // スペシャルマジック
-    specialMagic:{
-      name:"ドラゴン・ノヴァ",
-
-      // ここを好きなダメージに変更
-      damage:500,
-
-      // ここを好きなMP消費に変更
-      mpCost:50
-    }
-  },
-
-  "world_end": {
-    name:"終界の剣",
-    type:"weapon",
-    stars:"SECRET",
-    bonus:150,
     maxLevel:5,
 
     specialMagic:{
-      name:"ワールドエンド",
+      name:"ゲプトラダムスの大間違い",
       damage:1000,
       mpCost:100
     }
-  }
-
-  /*
-  追加例：
-
-  ,"new_secret":{
-    name:"新しいSecret武器",
-    type:"weapon",
+  },
+"bossgdora":{
+    name:"超弩級破壊兵器ボスゴドーラ",
+    type:"armor",
     stars:"SECRET",
-    bonus:200,
+    bonus:400,
     maxLevel:5,
 
     specialMagic:{
-      name:"新スペシャルマジック",
-      damage:2000,
-      mpCost:150
+      name:"ぐぅおぉぉぉぉぉ",
+      damage:9999999,
+      mpCost:9999999
+    }
+  },
+  "world_end":{
+    name:"スルパルチュールブレイカー",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:222,
+    maxLevel:5,
+
+    specialMagic:{
+      name:"猫の大群",
+      damage:888,
+      mpCost:50
     }
   }
-
-  */
 };
+
 
 
 /* =========================================
