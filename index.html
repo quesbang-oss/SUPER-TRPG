@@ -37,11 +37,10 @@
   } from
     "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-  // Firebase Consoleから取得した設定をここに貼る
   const firebaseConfig = {
     apiKey: "AIzaSyDuWTYGj8aeQvs1ulbhW1pxPmAJ195wTZg",
     authDomain: "trpg-c798c.firebaseapp.com",
-    databaseURL: "https://console.firebase.google.com",
+    databaseURL: "https://trpg-c798c-default-rtdb.firebaseio.com",
     projectId: "trpg-c798c",
     storageBucket: "trpg-c798c.firebasestorage.app",
     messagingSenderId: "395870734652",
@@ -51,7 +50,6 @@
   const firebaseApp = initializeApp(firebaseConfig);
   const database = getDatabase(firebaseApp);
 
-  // app.jsから使えるようにする
   window.firebaseDB = database;
   window.firebaseRef = ref;
   window.firebaseSet = set;
@@ -59,8 +57,10 @@
   window.firebaseUpdate = update;
   window.firebaseOnValue = onValue;
   window.firebaseRemove = remove;
-</script>
 
-<script src="app.js"></script>
+  const script = document.createElement("script");
+  script.src = "app.js";
+  document.body.appendChild(script);
+</script>
 </body>
 </html>
