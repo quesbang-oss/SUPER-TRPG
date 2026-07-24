@@ -603,9 +603,16 @@
         c.exp-=c.nextExp;
         c.level++;
         c.nextExp=Math.floor(c.nextExp*1.35);
-        c.maxHp+=20;c.hp=c.maxHp;
-        c.maxMp+=10;c.mp=c.maxMp;
-        c.str+=2;c.dex+=2;c.int+=2;c.pow+=2;
+        c.maxHp = Math.floor(c.maxHp * 1.01);
+c.hp = c.maxHp;
+
+c.maxMp += 10;
+c.mp = c.maxMp;
+
+c.str += 2;
+c.dex += 2;
+c.int += 2;
+c.pow += 2;
         log(`🎉 LEVEL UP! ${c.name} は Lv.${c.level} になった！\nステータスが上昇した！`,"success");
       }
     }
