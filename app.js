@@ -174,7 +174,7 @@ const SECRET_EQUIPMENT = {
     specialMagic: {
       name: "ファンタスティック・バースト",
       damage: 10,
-      mpCost: 100,
+      mpCost: 200,
       unlockLevel: 5
     }
   },
@@ -219,7 +219,7 @@ const SECRET_EQUIPMENT = {
     specialMagic: {
       name: "完全没収",
       damage: 12,
-      mpCost: 150,
+      mpCost: 300,
       unlockLevel: 5
     }
   }
