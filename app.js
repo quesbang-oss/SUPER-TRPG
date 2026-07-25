@@ -113,8 +113,8 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "ゲプトラダムスの大間違い",
-      damage: 6,
-      mpCost: 100,
+      damage: 5,
+      mpCost: 200,
       unlockLevel: 5
     }
   },
@@ -144,7 +144,7 @@ const SECRET_EQUIPMENT = {
     specialMagic: {
       name: "猫の大群",
       damage: 4,
-      mpCost: 11,
+      mpCost: 100,
       unlockLevel: 5
     }
   },
@@ -173,8 +173,8 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "ファンタスティック・バースト",
-      damage: 10,
-      mpCost: 200,
+      damage: 5,
+      mpCost: 300,
       unlockLevel: 5
     }
   },
@@ -188,8 +188,8 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "ミスター・スラッシュ",
-      damage: 8,
-      mpCost: 80,
+      damage: 4,
+      mpCost: 150,
       unlockLevel: 5
     }
   },
@@ -218,8 +218,8 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "完全没収",
-      damage: 12,
-      mpCost: 300,
+      damage: 5,
+      mpCost: 200,
       unlockLevel: 5
     }
   }
