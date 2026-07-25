@@ -19,7 +19,7 @@ const ENEMIES = {
   lich:{name:"リッチ",baseHp:2200,baseAttack:110,baseDefense:70,baseExp:2500,gold:2500,desc:"死を超越した魔術師。"},
   kraken:{name:"クラーケン",baseHp:3500,baseAttack:150,baseDefense:90,baseExp:4500,gold:5000,desc:"海を支配する怪物。"},
   void_beast:{name:"虚無獣",baseHp:6000,baseAttack:220,baseDefense:130,baseExp:9000,gold:10000,desc:"世界の外側から来た怪物。"},
-　kishi:{
+  kishi:{
     name:"方向の騎士",
     baseHp:10000,
     baseAttack:99999999,
