@@ -109,11 +109,11 @@ const SECRET_EQUIPMENT = {
     type: "weapon",
     stars: "SECRET",
     bonus: 100,
-    maxLevel: 5,
+    maxLevel: Infinity,
 
     specialMagic: {
       name: "ゲプトラダムスの大間違い",
-      damage: 1000,
+      damage: 6,
       mpCost: 100,
       unlockLevel: 5
     }
@@ -123,8 +123,8 @@ const SECRET_EQUIPMENT = {
     name: "超弩級破壊兵器ボスゴドーラ",
     type: "armor",
     stars: "SECRET",
-    bonus: 400,
-    maxLevel: 5,
+    bonus: 600,
+    maxLevel: Infinity,
 
     specialMagic: {
       name: "ぐぅおぉぉぉぉぉ",
@@ -143,8 +143,8 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "猫の大群",
-      damage: 888,
-      mpCost: 50,
+      damage: 4,
+      mpCost: 11,
       unlockLevel: 5
     }
   },
@@ -153,7 +153,7 @@ const SECRET_EQUIPMENT = {
     name: "けぇみかるX",
     type: "armor",
     stars: "SECRET",
-    bonus: 30,
+    bonus: 400,
     maxLevel: Infinity,
 
     specialMagic: {
@@ -168,13 +168,13 @@ const SECRET_EQUIPMENT = {
     name: "ファンタスティック",
     type: "weapon",
     stars: "SECRET",
-    bonus: 60,
+    bonus: 50,
     maxLevel: Infinity,
 
     specialMagic: {
       name: "ファンタスティック・バースト",
-      damage: 1200,
-      mpCost: 50,
+      damage: 10,
+      mpCost: 100,
       unlockLevel: 5
     }
   },
@@ -188,7 +188,7 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "ミスター・スラッシュ",
-      damage: 2500,
+      damage: 8,
       mpCost: 80,
       unlockLevel: 5
     }
@@ -198,7 +198,7 @@ const SECRET_EQUIPMENT = {
     name: "大胆なタイタン",
     type: "armor",
     stars: "SECRET",
-    bonus: 150,
+    bonus: 500,
     maxLevel: Infinity,
 
     specialMagic: {
@@ -218,7 +218,7 @@ const SECRET_EQUIPMENT = {
 
     specialMagic: {
       name: "完全没収",
-      damage: 10000,
+      damage: 12,
       mpCost: 150,
       unlockLevel: 5
     }
@@ -576,13 +576,20 @@ function getSpecialName(item){
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
   function getSpecialDamage(item){
-  if(!item)return 0;
-  if(item.rarity==="SECRET"){
-    const level=getEquipmentLevel(item);
-    const base=Number(item.specialMagic?.damage)||0;
-    return Math.floor(base*Math.pow(1.1,level));
-  }
-  return 0;
+
+  const magic=item.specialMagic;
+
+  // damageは固定ダメージではなく倍率として扱う
+  const multiplier =
+    magic.damage *
+    Math.pow(1.1, item.level - 1);
+
+  const base =
+      save.character.str
+    + getEquipmentBonus(item);
+
+  return Math.floor(base * multiplier);
+
 }
 
 
