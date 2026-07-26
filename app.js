@@ -136,40 +136,120 @@ const SECRET_EQUIPMENT={
     type:"weapon",
     stars:"SECRET",
     bonus:100,
-    maxLevel:5,
+    maxLevel:Infinity,
 
     specialMagic:{
       name:"ゲプトラダムスの大間違い",
-      damage:1000,
-      mpCost:100
+      damage:5,       // STR × 5
+      mpCost:100,
+      unlockLevel:5
     }
   },
-"bossgdora":{
+
+  "bossgdora":{
     name:"超弩級破壊兵器ボスゴドーラ",
     type:"armor",
     stars:"SECRET",
     bonus:400,
-    maxLevel:5,
+    maxLevel:Infinity,
 
     specialMagic:{
       name:"ぐぅおぉぉぉぉぉ",
-      damage:9999999,
-      mpCost:9999999
+      damage:100,     // STR × 100
+      mpCost:9999999,
+      unlockLevel:5
     }
   },
+
   "world_end":{
     name:"スーパーチュールブレイカー",
     type:"weapon",
     stars:"SECRET",
     bonus:222,
     maxLevel:Infinity,
-    specialMagic:{name:"猫の大群",damage:888,mpCost:50}
+
+    specialMagic:{
+      name:"猫の大群",
+      damage:4,       // STR × 4
+      mpCost:50,
+      unlockLevel:5
+    }
   },
-  chemical_x:{name:"けぇみかるX",type:"armor",stars:"SECRET",bonus:30,maxLevel:Infinity,specialMagic:{name:"化学崩壊",damage:500,mpCost:30}},
-  fantastic:{name:"ファンタスティック",type:"weapon",stars:"SECRET",bonus:60,maxLevel:Infinity,specialMagic:{name:"ファンタスティック・バースト",damage:1200,mpCost:50}},
-  mister_sword:{name:"ミスターソード",type:"weapon",stars:"SECRET",bonus:100,maxLevel:Infinity,specialMagic:{name:"ミスター・スラッシュ",damage:2500,mpCost:80}},
-  bold_titan:{name:"大胆なタイタン",type:"armor",stars:"SECRET",bonus:150,maxLevel:Infinity,specialMagic:{name:"大胆な反撃",damage:5000,mpCost:100}},
-  confiscation:{name:"コンフィスケイション",type:"weapon",stars:"SECRET",bonus:250,maxLevel:Infinity,specialMagic:{name:"完全没収",damage:10000,mpCost:150}}
+
+  "chemical_x":{
+    name:"けぇみかるX",
+    type:"armor",
+    stars:"SECRET",
+    bonus:30,
+    maxLevel:Infinity,
+
+    specialMagic:{
+      name:"化学崩壊",
+      damage:6,       // STR × 6
+      mpCost:30,
+      unlockLevel:5
+    }
+  },
+
+  "fantastic":{
+    name:"ファンタスティック",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:60,
+    maxLevel:Infinity,
+
+    specialMagic:{
+      name:"ファンタスティック・バースト",
+      damage:6,       // STR × 8
+      mpCost:50,
+      unlockLevel:5
+    }
+  },
+
+  "mister_sword":{
+    name:"ミスターソード",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:100,
+    maxLevel:Infinity,
+
+    specialMagic:{
+      name:"ミスター・スラッシュ",
+      damage:4,       // STR × 4
+      mpCost:80,
+      unlockLevel:5
+    }
+  },
+
+  "bold_titan":{
+    name:"大胆なタイタン",
+    type:"armor",
+    stars:"SECRET",
+    bonus:150,
+    maxLevel:Infinity,
+
+    specialMagic:{
+      name:"大胆な反撃",
+      damage:10,      // STR × 10
+      mpCost:100,
+      unlockLevel:5
+    }
+  },
+
+  "confiscation":{
+    name:"コンフィスケイション",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:250,
+    maxLevel:Infinity,
+
+    specialMagic:{
+      name:"完全没収",
+      damage:6,      // STR × 12
+      mpCost:150,
+      unlockLevel:5
+    }
+  }
 };
 
 
@@ -516,23 +596,15 @@ function getSpecialName(item){
 }
   function getSpecialDamage(item){
 
-  const magic =
-    item?.specialMagic;
+  const str =
+    Number(save.character?.str) || 0;
 
   const damageRate =
-    Number(magic?.damage) || 1;
-
-  const c =
-    save.character;
-
-  const str =
-    Number(c?.str) || 0;
+    Number(item?.specialMagic?.damage) || 1;
 
   return Math.max(
     1,
-    Math.floor(
-      str * damageRate
-    )
+    Math.floor(str * damageRate)
   );
 }
 
