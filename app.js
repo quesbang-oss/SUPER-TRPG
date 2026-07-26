@@ -515,13 +515,25 @@ function getSpecialName(item){
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
   function getSpecialDamage(item){
-  if(!item)return 0;
-  if(item.rarity==="SECRET"){
-    const level=getEquipmentLevel(item);
-    const base=Number(item.specialMagic?.damage)||0;
-    return Math.floor(base*Math.pow(1.1,level));
-  }
-  return 0;
+
+  const magic =
+    item?.specialMagic;
+
+  const damageRate =
+    Number(magic?.damage) || 1;
+
+  const c =
+    save.character;
+
+  const str =
+    Number(c?.str) || 0;
+
+  return Math.max(
+    1,
+    Math.floor(
+      str * damageRate
+    )
+  );
 }
 
 
