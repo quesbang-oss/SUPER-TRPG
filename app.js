@@ -97,7 +97,7 @@ void_beast:{
   baseExp:9000,
   gold:10000,
   desc:"世界の外側から来た怪物。"
-}
+},
   kishi:{
     name:"方向の騎士",
     baseHp:10000,
