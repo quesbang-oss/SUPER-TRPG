@@ -98,7 +98,7 @@ void_beast:{
   gold:10000,
   desc:"世界の外側から来た怪物。"
 },
-  kishi:{
+ kishi:{
     name:"方向の騎士",
     baseHp:10000,
     baseAttack:99999999,
@@ -108,7 +108,7 @@ void_beast:{
     desc:"こいつはどこから来たのだろうか．．．"
 },
 
-funny:{
+   funny:{
     name:"大草原不可避",
     baseHp:100,
     baseAttack:1000,
