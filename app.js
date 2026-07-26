@@ -3,138 +3,56 @@
 
 /* 完全スタンドアロン：fetch不使用。敵データは直接内蔵。 */
 const STORAGE_KEY="border-trpg-ultimate-v2";
+const STAT_MAX=999999999;
 
 const ENEMIES = {
   slime:{name:"スライム",baseHp:30,baseAttack:5,baseDefense:1,baseExp:10,gold:5,desc:"ぷるぷるした魔物。"},
   shadow:{name:"黒い影",baseHp:50,baseAttack:8,baseDefense:3,baseExp:25,gold:12,desc:"不気味な影。"},
   goblin:{name:"ゴブリン",baseHp:80,baseAttack:12,baseDefense:5,baseExp:40,gold:20,desc:"小さく素早い魔物。"},
   wolf:{name:"灰色狼",baseHp:100,baseAttack:16,baseDefense:6,baseExp:55,gold:30,desc:"群れで狩る獣。"},
-  orc:{
-  name:"オーク",
-  baseHp:180,
-  baseAttack:22,
-  baseDefense:20,
-  baseExp:90,
-  gold:55,
-  desc:"強靭な肉体を持つ魔物。"
-},
-
-vampire:{
-  name:"ヴァンパイア",
-  baseHp:260,
-  baseAttack:30,
-  baseDefense:25,
-  baseExp:160,
-  gold:100,
-  desc:"血を吸う夜の怪物。"
-},
-
-golem:{
-  name:"ストーンゴーレム",
-  baseHp:500,
-  baseAttack:35,
-  baseDefense:45,
-  baseExp:300,
-  gold:180,
-  desc:"巨大な石の守護者。"
-},
-
-wyvern:{
-  name:"ワイバーン",
-  baseHp:700,
-  baseAttack:45,
-  baseDefense:35,
-  baseExp:450,
-  gold:300,
-  desc:"空を舞う竜種。"
-},
-
-demon:{
-  name:"上級悪魔",
-  baseHp:900,
-  baseAttack:60,
-  baseDefense:55,
-  baseExp:700,
-  gold:500,
-  desc:"強大な魔力を持つ悪魔。"
-},
-
-dragon:{
-  name:"炎竜",
-  baseHp:1500,
-  baseAttack:80,
-  baseDefense:75,
-  baseExp:1500,
-  gold:1200,
-  desc:"炎を操る巨大な竜。"
-},
-
-lich:{
-  name:"リッチ",
-  baseHp:2200,
-  baseAttack:110,
-  baseDefense:95,
-  baseExp:2500,
-  gold:2500,
-  desc:"死を超越した魔術師。"
-},
-
-kraken:{
-  name:"クラーケン",
-  baseHp:3500,
-  baseAttack:150,
-  baseDefense:120,
-  baseExp:4500,
-  gold:5000,
-  desc:"海を支配する怪物。"
-},
-
-  void_beast:{
-    name:"虚無獣",
-    baseHp:6000,
-    baseAttack:220,
-    baseDefense:170,
-    baseExp:9000,
-    gold:10000,
-    desc:"世界の外側から来た怪物。"
-  },
-
-  kishi:{
-    name:"方向の騎士",
-    baseHp:10000,
-    baseAttack:99999999,
-    baseDefense:1000,
-    baseExp:15000,
-    gold:15000,
-    desc:"こいつはどこから来たのだろうか．．．"
-  },
-
-  funny:{
-    name:"大草原不可避",
-    baseHp:100,
-    baseAttack:1000,
-    baseDefense:1000000,
-    baseExp:15000,
-    gold:15000,
-    desc:"こいつはたぶん...ネットから来たな"
-  },
-
+  orc:{name:"オーク",baseHp:180,baseAttack:22,baseDefense:12,baseExp:90,gold:55,desc:"強靭な肉体を持つ魔物。"},
+  skeleton:{name:"スケルトン",baseHp:120,baseAttack:18,baseDefense:8,baseExp:70,gold:40,desc:"骨だけの戦士。"},
+  vampire:{name:"ヴァンパイア",baseHp:260,baseAttack:30,baseDefense:15,baseExp:160,gold:100,desc:"血を吸う夜の怪物。"},
+  golem:{name:"ストーンゴーレム",baseHp:500,baseAttack:35,baseDefense:30,baseExp:300,gold:180,desc:"巨大な石の守護者。"},
+  wyvern:{name:"ワイバーン",baseHp:700,baseAttack:45,baseDefense:24,baseExp:450,gold:300,desc:"空を舞う竜種。"},
+  demon:{name:"上級悪魔",baseHp:900,baseAttack:60,baseDefense:40,baseExp:700,gold:500,desc:"強大な魔力を持つ悪魔。"},
+  dragon:{name:"炎竜",baseHp:1500,baseAttack:80,baseDefense:55,baseExp:1500,gold:1200,desc:"炎を操る巨大な竜。"},
+  lich:{name:"リッチ",baseHp:2200,baseAttack:110,baseDefense:70,baseExp:2500,gold:2500,desc:"死を超越した魔術師。"},
+  kraken:{name:"クラーケン",baseHp:3500,baseAttack:150,baseDefense:90,baseExp:4500,gold:5000,desc:"海を支配する怪物。"},
+  void_beast:{name:"虚無獣",baseHp:6000,baseAttack:220,baseDefense:130,baseExp:9000,gold:10000,desc:"世界の外側から来た怪物。"},
+  kishi:{name:"方向の騎士",baseHp:10000,baseAttack:99999999,baseDefense:1000,baseExp:15000,gold:15000,desc:"こいつはどこから来たのだろうか．．．"},
+  funny:{name:"大草原不可避",baseHp:100,baseAttack:1000,baseDefense:1000000,baseExp:15000,gold:15000,desc:"こいつはたぶん...ネットから来たな"},
   cat:{
-    name:"ルナティック猫",
-    baseHp:100000000,
-    baseAttack:10000,
-    baseDefense:100000,
-    baseExp:1000000,
-    gold:1000000,
-    desc:"狂気に満ちた猫。英数名：cat",
+  name:"ルナティック猫",
+  baseHp:100000000,
+  baseAttack:10000,
+  baseDefense:100000,
+  baseExp:1000000,
+  gold:1000000,
 
-    guaranteedDrop:{
-      name:"髪の毛一本",
-      type:"weapon",
-      stars:4,
-      bonus:100
+  desc:"狂気に満ちた猫。英数名：cat",
+
+  // 行動順
+  // 1 = 通常攻撃
+  // 2 = 猫パンチ・極
+  actions:[1,2,1],
+
+  // 必殺技
+  skills:{
+    2:{
+      name:"猫パンチ・極",
+      damageRate:3
     }
+  },
+
+  guaranteedDrop:{
+    name:"髪の毛一本",
+    type:"weapon",
+    stars:4,
+    bonus:100
   }
+}
+　
 };
 
 /* =========================================
@@ -172,13 +90,6 @@ const COMMANDS=[
 ["/synthesize",["/syn"],"装備合成","/synthesize 番号 番号 番号"],
   ["/enemy_list",["/el"],"敵ID一覧","/enemy_list"],
   ["/enemy_info",["/ei"],"敵情報","/enemy_info 敵ID レベル"],
-  ["/boss_list",["/bl"],"ボス・裏ボス一覧","/boss_list"],
-  ["/boss_info",["/bi"],"ボス情報","/boss_info ボスID"],
-  ["/boss_start",["/boss"],"ボス戦開始","/boss_start ボスID"],
-  ["/boss_status",["/bss"],"ボス戦状態","/boss_status"],
-  ["/boss_attack",["/ba"],"ボス戦通常攻撃","/boss_attack"],
-  ["/boss_magic",["/bm"],"ボス戦魔法・必殺技","/boss_magic 魔法名"],
-  ["/boss_run",["/br"],"ボス戦から逃走","/boss_run"],
   ["/battle_start",["/b"],"戦闘開始","/battle_start 敵ID レベル"],
   ["/battle_status",["/bs"],"戦闘状態","/battle_status"],
   ["/battle_attack",["/a"],"通常攻撃","/battle_attack"],
@@ -219,147 +130,49 @@ const EQUIPMENT_SPECIALS={
    SECRETレアリティ設定
    ここを追加するだけでSecret装備を増やせる
 ========================================= */
-const SECRET_EQUIPMENT = {
-  "dragon_soul": {
-    name: "大魔神の予言書",
-    type: "weapon",
-    stars: "SECRET",
-    bonus: 100,
-    maxLevel: Infinity,
+const SECRET_EQUIPMENT={
+  "dragon_soul":{
+    name:"大魔神の予言書",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:100,
+    maxLevel:5,
 
-    specialMagic: {
-      name: "ゲプトラダムスの大間違い",
-      damage: 5,
-      mpCost: 200,
-      unlockLevel: 5
+    specialMagic:{
+      name:"ゲプトラダムスの大間違い",
+      damage:1000,
+      mpCost:100
     }
   },
+"bossgdora":{
+    name:"超弩級破壊兵器ボスゴドーラ",
+    type:"armor",
+    stars:"SECRET",
+    bonus:400,
+    maxLevel:5,
 
-  "bossgdora": {
-    name: "超弩級破壊兵器ボスゴドーラ",
-    type: "armor",
-    stars: "SECRET",
-    bonus: 600,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "ぐぅおぉぉぉぉぉ",
-      damage: 9999999,
-      mpCost: 9999999,
-      unlockLevel: 5
+    specialMagic:{
+      name:"ぐぅおぉぉぉぉぉ",
+      damage:9999999,
+      mpCost:9999999
     }
   },
-
-  "world_end": {
-    name: "スーパーチュールブレイカー",
-    type: "weapon",
-    stars: "SECRET",
-    bonus: 222,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "猫の大群",
-      damage: 4,
-      mpCost: 100,
-      unlockLevel: 5
-    }
+  "world_end":{
+    name:"スーパーチュールブレイカー",
+    type:"weapon",
+    stars:"SECRET",
+    bonus:222,
+    maxLevel:Infinity,
+    specialMagic:{name:"猫の大群",damage:888,mpCost:50}
   },
-
-  "chemical_x": {
-    name: "けぇみかるX",
-    type: "armor",
-    stars: "SECRET",
-    bonus: 400,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "化学崩壊",
-      damage: 500,
-      mpCost: 30,
-      unlockLevel: 5
-    }
-  },
-
-  "fantastic": {
-    name: "ファンタスティック",
-    type: "weapon",
-    stars: "SECRET",
-    bonus: 50,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "ファンタスティック・バースト",
-      damage: 5,
-      mpCost: 300,
-      unlockLevel: 5
-    }
-  },
-
-  "mister_sword": {
-    name: "ミスターソード",
-    type: "weapon",
-    stars: "SECRET",
-    bonus: 100,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "ミスター・スラッシュ",
-      damage: 4,
-      mpCost: 150,
-      unlockLevel: 5
-    }
-  },
-
-  "bold_titan": {
-    name: "大胆なタイタン",
-    type: "armor",
-    stars: "SECRET",
-    bonus: 500,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "大胆な反撃",
-      damage: 5000,
-      mpCost: 100,
-      unlockLevel: 5
-    }
-  },
-
-  "confiscation": {
-    name: "コンフィスケイション",
-    type: "weapon",
-    stars: "SECRET",
-    bonus: 250,
-    maxLevel: Infinity,
-
-    specialMagic: {
-      name: "完全没収",
-      damage: 5,
-      mpCost: 200,
-      unlockLevel: 5
-    }
-  }
+  chemical_x:{name:"けぇみかるX",type:"armor",stars:"SECRET",bonus:30,maxLevel:Infinity,specialMagic:{name:"化学崩壊",damage:500,mpCost:30}},
+  fantastic:{name:"ファンタスティック",type:"weapon",stars:"SECRET",bonus:60,maxLevel:Infinity,specialMagic:{name:"ファンタスティック・バースト",damage:1200,mpCost:50}},
+  mister_sword:{name:"ミスターソード",type:"weapon",stars:"SECRET",bonus:100,maxLevel:Infinity,specialMagic:{name:"ミスター・スラッシュ",damage:2500,mpCost:80}},
+  bold_titan:{name:"大胆なタイタン",type:"armor",stars:"SECRET",bonus:150,maxLevel:Infinity,specialMagic:{name:"大胆な反撃",damage:5000,mpCost:100}},
+  confiscation:{name:"コンフィスケイション",type:"weapon",stars:"SECRET",bonus:250,maxLevel:Infinity,specialMagic:{name:"完全没収",damage:10000,mpCost:150}}
 };
 
-function repairSecretItemLevels() {
-  if (!currentCharacter || !currentCharacter.inventory) return;
 
-  currentCharacter.inventory.forEach(item => {
-    if (
-      item &&
-      item.stars === "SECRET" &&
-      item.specialMagic
-    ) {
-      if (typeof item.level !== "number") {
-        item.level = Number(item.level) || 1;
-      }
-
-      if (!item.specialMagicUnlockLevel) {
-        item.specialMagicUnlockLevel = 5;
-      }
-    }
-  });
-}
 
 /* =========================================
    レアリティ合成設定
@@ -438,6 +251,16 @@ function load(){
     s.equipment=s.equipment||{weapon:null,armor:null};
     s.equipment.weapon=normalizeItem(s.equipment.weapon);
     s.equipment.armor=normalizeItem(s.equipment.armor);
+    for(const c of s.characters||[]){
+      for(const k of ["str","dex","int","pow"]){
+        c[k]=Math.min(STAT_MAX,Math.max(0,Number(c[k])||0));
+      }
+    }
+    if(s.character){
+      for(const k of ["str","dex","int","pow"]){
+        s.character[k]=Math.min(STAT_MAX,Math.max(0,Number(s.character[k])||0));
+      }
+    }
     return s;
   }catch(e){
     return fresh();
@@ -611,7 +434,7 @@ function statusUp(stat, amount=1){
   const cost=ENEMIES.slime.baseExp*20*n;
   if(save.gold<cost)return log(`Goldが足りません。必要: ${cost} Gold（スライム${20*n}体分）`,"error");
   save.gold-=cost;
-  save.character[k]+=n;
+  save.character[k]=Math.min(STAT_MAX, (Number(save.character[k])||0)+n);
   save.characters=save.characters.map(x=>x.id===save.character.id?save.character:x);
   persist();
   log(`💰 ${cost} Goldを使用して${jp[k]}を+${n}しました！`,"success");
@@ -692,20 +515,13 @@ function getSpecialName(item){
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
   function getSpecialDamage(item){
-
-  const magic=item.specialMagic;
-
-  // damageは固定ダメージではなく倍率として扱う
-  const multiplier =
-    magic.damage *
-    Math.pow(1.1, item.level - 1);
-
-  const base =
-      save.character.str
-    + getEquipmentBonus(item);
-
-  return Math.floor(base * multiplier);
-
+  if(!item)return 0;
+  if(item.rarity==="SECRET"){
+    const level=getEquipmentLevel(item);
+    const base=Number(item.specialMagic?.damage)||0;
+    return Math.floor(base*Math.pow(1.1,level));
+  }
+  return 0;
 }
 
 
@@ -825,14 +641,46 @@ function useItem(name){
   );
 }
 
+function getEnemyActionNumber(enemy){
+  if(!enemy||!Array.isArray(enemy.actions)||enemy.actions.length===0)return 1;
+  const turn=Number(enemy.actionTurn)||0;
+  return Number(enemy.actions[turn%enemy.actions.length])||1;
+}
+
+function enemyNormalAttack(enemy,character){
+  const armorBonus=getEquipmentBonus(character.equipment?.armor);
+  const damage=Math.max(0,rand(Math.max(1,enemy.attack-5),enemy.attack)-armorBonus);
+  character.hp=Math.max(0,character.hp-damage);
+  log(`${enemy.name}の通常攻撃！ ${damage}ダメージ。`);
+}
+
+function enemyAction(enemy,character){
+  const actionNumber=getEnemyActionNumber(enemy);
+  enemy.actionTurn=(Number(enemy.actionTurn)||0)+1;
+
+  if(actionNumber===1){
+    enemyNormalAttack(enemy,character);
+    return;
+  }
+
+  const skill=enemy.skills?.[actionNumber];
+  if(!skill){
+    enemyNormalAttack(enemy,character);
+    return;
+  }
+
+  const armorBonus=getEquipmentBonus(character.equipment?.armor);
+  const damage=Math.max(0,Math.floor(enemy.attack*Number(skill.damageRate??1))-armorBonus);
+  character.hp=Math.max(0,character.hp-damage);
+  log(`⚡ ${enemy.name}の必殺技「${skill.name}」！ ${damage}ダメージ！`,"error");
+}
+
 function enemyTurn(){
   if(!save.battle)return;
   const e=save.battle.enemy,c=save.character;
-  const ed=rand(Math.max(1,e.attack-5),e.attack);
-  c.hp=Math.max(0,c.hp-ed);
-  log(`${e.name}の攻撃！ ${ed}ダメージ。`);
+  enemyAction(e,c);
   bossSpecialTurn(e);
-  if(c.hp<=0){log("あなたは倒れた……","error");finishBattle(false);return}
+  if(c.hp<=0){log("あなたは倒れた……","error");finishBattle(false);return;}
   persist();
   battleStatus();
 }
@@ -853,6 +701,24 @@ function autoItem(){
     return true;
   }
   return false;
+}
+
+function giveGuaranteedDrop(enemy){
+  if(!enemy?.guaranteedDrop)return;
+  const d=enemy.guaranteedDrop;
+  const item={
+    id:String(Date.now()+Math.random()),
+    type:d.type,
+    stars:d.stars,
+    rarity:"NORMAL",
+    name:d.name,
+    bonus:d.bonus,
+    killCount:0,
+    level:0
+  };
+  save.inventory.items.push(item);
+  log(`🎁 確定ドロップ！ ${item.name} ★${item.stars} を入手した！`,"success");
+  return item;
 }
 
 function rollRareEquipment(enemy){
@@ -1112,53 +978,6 @@ function enemyStats(id,lv){
   };
 }
 
-function bossList(){
-  const lines=["【ボス】"];
-  Object.entries(BOSS_DATA).forEach(([id,b])=>{
-    if(b.rank) lines.push(`${id} → ランク${b.rank} ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`);
-  });
-  lines.push("", "【裏ボス】");
-  Object.entries(BOSS_DATA).forEach(([id,b])=>{
-    if(!b.rank) lines.push(`${id} → ${b.name} HP ${b.hp} 攻撃 ${b.attack} 防御 ${b.defense}`);
-  });
-  log(lines.join("\n"));
-}
-
-function bossInfo(id){
-  if(!id)return usage("/boss_info");
-  const b=BOSS_DATA[id];
-  if(!b)return log(`ボスID「${id}」がありません。\n/boss_list で確認してください。`,"error");
-  const evolution=b.evolving ? Number(save.history?.filter(x=>x===`boss:${id}:defeat`).length)||0 : 0;
-  const hp=b.hp+(b.evolving?evolution*500000:0);
-  const attack=b.attack+(b.evolving?evolution*300:0);
-  log(`${b.name}${b.rank?` ランク${b.rank}`:" 裏ボス"}\nHP ${hp}\n攻撃 ${attack}\n防御 ${b.defense}\n${b.secret?`専用技: ${b.secret}\n`:""}${b.evolving?`撃破回数: ${evolution}\n次回戦闘でHP+500000・攻撃+300`:""}`);
-}
-
-function bossStart(id){
-  if(!id)return usage("/boss_start");
-  return battleStart(id);
-}
-
-function bossStatus(){
-  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
-  return battleStatus();
-}
-
-function bossAttack(){
-  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
-  return attack();
-}
-
-function bossMagic(name){
-  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
-  return magic(name);
-}
-
-function bossRun(){
-  if(!save.battle||!save.battle.enemy?.boss)return usage("/boss_start","ボス戦中ではありません。");
-  return run();
-}
-
 function enemyList(){
   const normal=Object.keys(ENEMIES).map(id=>`${id} → ${ENEMIES[id].name} (基礎HP ${ENEMIES[id].baseHp})`);
   const bosses=Object.keys(BOSS_DATA).map(id=>`${id} → ${BOSS_DATA[id].name} (ボスHP ${BOSS_DATA[id].hp})`);
@@ -1178,7 +997,7 @@ function battleStart(id,lv){
   if(!save.character)return usage("/char_create","先にキャラクターを作成してください。");
   const e=enemyStats(id,lv||1);
   save.battle={
-    enemy:e,
+    enemy:{...e,actionTurn:0},
     returnState:{hp:save.character.hp,mp:save.character.mp}
   };
   persist();
@@ -1203,7 +1022,7 @@ function gainExp(n){
     c.nextExp=Math.floor(c.nextExp*1.35);
     c.maxHp+=20;c.hp=c.maxHp;
     c.maxMp+=10;c.mp=c.maxMp;
-    c.str+=2;c.dex+=2;c.int+=2;c.pow+=2;
+    c.str=Math.min(STAT_MAX,c.str+2);c.dex=Math.min(STAT_MAX,c.dex+2);c.int=Math.min(STAT_MAX,c.int+2);c.pow=Math.min(STAT_MAX,c.pow+2);
     log(`🎉 LEVEL UP! ${c.name} は Lv.${c.level} になった！\nステータスが上昇した！`,"success");
   }
 }
@@ -1230,26 +1049,17 @@ function finishBattle(win){
   if(win){
     if(b.enemy.boss){
       if(b.enemy.rank) {
-        const levels=b.enemy.rank;
-        for(let i=0;i<levels;i++){
-          c.level++;
-          c.nextExp=Math.max(100,Math.floor(c.nextExp*1.35));
-          c.maxHp+=20;
-          c.hp=c.maxHp;
-          c.maxMp+=10;
-          c.mp=c.maxMp;
-          c.str+=2;
-          c.dex+=2;
-          c.int+=2;
-          c.pow+=2;
-        }
-        log(`🏆 ${b.enemy.name}撃破！ レベルが${levels}上がった！\n現在Lv.${c.level}`,"success");
+        for(let i=0;i<b.enemy.rank;i++) gainExp(b.enemy.nextExp||0);
+        c.level+=b.enemy.rank;
+        c.nextExp=Math.max(100,Math.floor(c.nextExp*1.35));
+        log(`🏆 ${b.enemy.name}撃破！ レベルが${b.enemy.rank}上がった！`,"success");
       }
       save.gold+=b.enemy.gold;
       log(`💰 Gold +${b.enemy.gold}`,"success");
       save.history=save.history||[];
       save.history.push(`boss:${b.enemy.id}:defeat`);
     }else{
+      giveGuaranteedDrop(b.enemy);
       gainExp(b.enemy.exp);
       save.gold+=b.enemy.gold;
       log(`💰 Gold +${b.enemy.gold}`,"success");
@@ -1287,38 +1097,16 @@ function attack(){
   const d=normalDamageAgainst(e,c,weaponBonus);
   e.hp-=d;
   log(`${c.name}の攻撃！ ${d}ダメージ。`);
-  if(e.hp<=0){
-
-  log(`${e.name}を倒した！`,"success");
-
-  // 確定ドロップ
-  if(e.id==="cat" || e.key==="cat"){
-
-    const drop={
-      id:"lunatic_cat_hair",
-      name:"髪の毛一本",
-      type:"weapon",
-      stars:4,
-      rarity:"★4",
-      bonus:100
-    };
-
-    save.inventory ??= [];
-    save.inventory.push(drop);
-
-    log(
-      `🎁 確定ドロップ！「${drop.name}」を入手した！`,
-      "success"
-    );
+  enemyAction(e,c);
+  bossSpecialTurn(e);
+  if(e.hp<=0&&c.hp<=0){
+    log("相打ち....","warn");
+    return finishBattle(false);
   }
-
-  rollRareEquipment(e);
-  return finishBattle(true);
-}
-  const armorBonus=getEquipmentBonus(save.equipment?.armor);
-  const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);
-  c.hp=Math.max(0,c.hp-ed);
-  log(`${e.name}の攻撃！ ${ed}ダメージ。`);
+  if(e.hp<=0){
+    log(`${e.name}を倒した！`,"success");
+    return finishBattle(true);
+  }
   if(c.hp<=0){
     log("あなたは倒れた……","error");
     return finishBattle(false);
@@ -1336,40 +1124,6 @@ function magic(name){
 const isSpecial=
   specialName &&
   name.trim()===specialName;
-
-/* =========================================
-   SECRET必殺技の解放レベルチェック
-========================================= */
-if(isSpecial && weapon?.rarity==="SECRET"){
-
-  const magicData = weapon.specialMagic;
-
-  // 必殺技解放レベル
-  // SECRET装備はレベル5で解放
-  const unlockLevel =
-    Number(
-      weapon.specialMagicUnlockLevel ??
-      magicData?.unlockLevel ??
-      5
-    );
-
-  // レベルが未設定・0・nullの場合は1として扱う
-  const currentLevel =
-    Number(weapon.level ?? 1);
-
-  // レベル5未満なら使用不可
-  if(currentLevel < unlockLevel){
-
-    return log(
-      `${weapon.name}の必殺技「${magicData.name}」は` +
-      `レベル${unlockLevel}で解放されます。` +
-      `（現在レベル: ${currentLevel}）`,
-      "warn"
-    );
-
-  }
-
-}
 
 const mpCost=
   isSpecial
@@ -1397,14 +1151,16 @@ const mpCost=
         );
   e.hp-=d;
   log(isSpecial?`✨ 必殺技「${specialName}」発動！ ${d}ダメージ！`:`${name}！ ${d}ダメージ。`,isSpecial?"success":"system");
+  enemyAction(e,c);
+  bossSpecialTurn(e);
+  if(e.hp<=0&&c.hp<=0){
+    log("相打ち....","warn");
+    return finishBattle(false);
+  }
   if(e.hp<=0){
     log(`${e.name}を倒した！`,"success");
-    rollRareEquipment(e);
     return finishBattle(true);
   }
-  const armorBonus=getEquipmentBonus(save.equipment?.armor);
-  const ed=Math.max(0,rand(Math.max(1,e.attack-5),e.attack)-armorBonus);
-  c.hp=Math.max(0,c.hp-ed);
   if(c.hp<=0)return finishBattle(false);
   persist();
   battleStatus();
@@ -2161,8 +1917,6 @@ function help(){
     "★10 ラグナロク\n"+
     "\n【敵・戦闘】\n"+
     COMMANDS.filter(c=>["/enemy_list","/enemy_info","/battle_start","/battle_status","/battle_attack","/magic_cast","/battle_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
-    "\n\n【ボス・裏ボス】\n"+
-    COMMANDS.filter(c=>["/boss_list","/boss_info","/boss_start","/boss_status","/boss_attack","/boss_magic","/boss_run"].includes(c[0])).map(c=>`${c[0]} ${c[2]} | ${c[3]}`).join("\n")+
     "\n\n【PvP】\n"+
     "PvP開始時にそれぞれのキャラクターのステータスをコピーします。\n"+
     "PvP中のHP・MP・装備状態の変化は元のキャラクターに影響しません。\n"+
@@ -2200,13 +1954,6 @@ function execute(raw){
   );
     case"/enemy_list":return enemyList();
     case"/enemy_info":return enemyInfo(p[0],p[1]);
-    case"/boss_list":return bossList();
-    case"/boss_info":return bossInfo(p[0]);
-    case"/boss_start":return bossStart(p[0]);
-    case"/boss_status":return bossStatus();
-    case"/boss_attack":return bossAttack();
-    case"/boss_magic":return bossMagic(p.join(" "));
-    case"/boss_run":return bossRun();
     case"/battle_start":return battleStart(p[0],p[1]);
     case"/battle_status":return battleStatus();
     case"/battle_attack":return attack();
