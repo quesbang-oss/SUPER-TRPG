@@ -89,16 +89,17 @@ kraken:{
   desc:"海を支配する怪物。"
 },
 
-void_beast:{
-  name:"虚無獣",
-  baseHp:6000,
-  baseAttack:220,
-  baseDefense:170,
-  baseExp:9000,
-  gold:10000,
-  desc:"世界の外側から来た怪物。"
-},
- kishi:{
+  void_beast:{
+    name:"虚無獣",
+    baseHp:6000,
+    baseAttack:220,
+    baseDefense:170,
+    baseExp:9000,
+    gold:10000,
+    desc:"世界の外側から来た怪物。"
+  },
+
+  kishi:{
     name:"方向の騎士",
     baseHp:10000,
     baseAttack:99999999,
@@ -106,9 +107,9 @@ void_beast:{
     baseExp:15000,
     gold:15000,
     desc:"こいつはどこから来たのだろうか．．．"
-},
+  },
 
-   funny:{
+  funny:{
     name:"大草原不可避",
     baseHp:100,
     baseAttack:1000,
@@ -116,8 +117,9 @@ void_beast:{
     baseExp:15000,
     gold:15000,
     desc:"こいつはたぶん...ネットから来たな"
-},
-cat:{
+  },
+
+  cat:{
     name:"ルナティック猫",
     baseHp:100000000,
     baseAttack:10000,
