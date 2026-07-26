@@ -1224,28 +1224,20 @@ if(isSpecial && weapon?.rarity==="SECRET"){
 
   const magicData = weapon.specialMagic;
 
-  if(!magicData){
-    return log(
-      `${weapon.name}には必殺技データがありません。`,
-      "error"
-    );
-  }
-
   // 必殺技解放レベル
-  // weapon側 → specialMagic側 → デフォルト5
+  // SECRET装備はレベル5で解放
   const unlockLevel =
     Number(
       weapon.specialMagicUnlockLevel ??
-      magicData.unlockLevel ??
+      magicData?.unlockLevel ??
       5
     );
 
-  // 古いデータでlevelが0/nullの場合は1として扱う
+  // レベルが未設定・0・nullの場合は1として扱う
   const currentLevel =
     Number(weapon.level ?? 1);
 
   // レベル5未満なら使用不可
-  // レベル5以上なら使用可能
   if(currentLevel < unlockLevel){
 
     return log(
