@@ -2341,65 +2341,38 @@
         }
 
         function drawForest(ctx,w,h,t){
-          // テクノロジー風の戦闘フィールド
           ctx.fillStyle="#fff";
           ctx.fillRect(0,0,w,h);
 
-          const scan=Math.floor((t*0.03)%h);
-          ctx.strokeStyle="#ddd";
-          ctx.lineWidth=1;
-          for(let y=0;y<h;y+=18){
-            ctx.beginPath();
-            ctx.moveTo(0,y);
-            ctx.lineTo(w,y);
-            ctx.stroke();
-          }
-          for(let x=0;x<w;x+=24){
-            ctx.beginPath();
-            ctx.moveTo(x,0);
-            ctx.lineTo(x,h);
-            ctx.stroke();
-          }
-
-          // スキャンライン
-          ctx.strokeStyle="#bbb";
-          ctx.beginPath();
-          ctx.moveTo(0,scan);
-          ctx.lineTo(w,scan);
-          ctx.stroke();
-
-          // デジタル地面
-          const ground=h*0.86;
           ctx.strokeStyle="#111";
           ctx.lineWidth=2;
-          ctx.beginPath();
-          ctx.moveTo(0,ground);
-          ctx.lineTo(w,ground);
-          ctx.stroke();
-          for(let x=0;x<w;x+=32){
+
+          // 地面
+          for(let x=0;x<w;x+=18){
+            const yy=h*0.78+Math.sin(x*0.08+t*0.0003)*3;
             ctx.beginPath();
-            ctx.moveTo(x,ground);
-            ctx.lineTo(x+16,ground+8);
-            ctx.lineTo(x+32,ground);
+            ctx.moveTo(x,yy);
+            ctx.lineTo(x+8,yy-3);
+            ctx.lineTo(x+15,yy+1);
             ctx.stroke();
           }
 
-          // HUD風の角・ターゲットマーカー
-          ctx.strokeStyle="#111";
-          ctx.lineWidth=2;
-          const marks=[[18,18,1,1],[w-18,18,-1,1],[18,h-18,1,-1],[w-18,h-18,-1,-1]];
-          for(const [x,y,dx,dy] of marks){
+          // 背景の木々
+          for(let x=20;x<w;x+=55){
+            const y=h*0.55+((x*17)%40);
             ctx.beginPath();
-            ctx.moveTo(x,y+dy*18);ctx.lineTo(x,y);ctx.lineTo(x+dx*18,y);
+            ctx.moveTo(x,y+80);
+            ctx.lineTo(x,y);
+            ctx.lineTo(x-18,y+24);
+            ctx.moveTo(x,y+8);
+            ctx.lineTo(x+18,y+30);
             ctx.stroke();
           }
 
-          // デジタル粒子
-          for(let i=0;i<24;i++){
-            const x=(i*83+t*0.02)%w;
-            const y=(i*47+t*0.01)%(ground-30);
-            pixelRect(ctx,x,y,3,3,i%3===0?"#111":"#999");
-          }
+          // 白黒の四角い雲
+          pixelRect(ctx,w*0.12,h*0.16,42,7,"#111");
+          pixelRect(ctx,w*0.16,h*0.13,28,7,"#111");
+          pixelRect(ctx,w*0.73,h*0.2,54,7,"#111");
         }
 
         function drawPlayer(ctx,x,y,scale){
@@ -2446,7 +2419,6 @@
           ctx.strokeStyle="#111";
           ctx.lineWidth=Math.max(2,3*scale);
 
-          // 武器のデジタル発光ライン風アクセント
           if(isAxe){
             ctx.beginPath();
             ctx.moveTo(swordX,swordY+28*scale);
@@ -2579,7 +2551,6 @@
           ctx.strokeStyle="#111";
           ctx.lineWidth=3;
 
-          // 攻撃スラッシュ + デジタル粒子
           if(side==="player"){
             const x=w*0.52+progress*100;
             const y=h*0.47;
@@ -2630,7 +2601,7 @@
 
           if(c){
             const scale=Math.max(0.75,Math.min(1.5,w/900));
-            drawPlayer(ctx,w*0.28,h*0.78,scale);
+            drawPlayer(ctx,w*0.28,h*0.56,scale);
             ctx.font="bold 14px monospace";
             ctx.fillStyle="#111";
             ctx.fillText(c.name||"PLAYER",w*0.12,24);
@@ -2640,7 +2611,7 @@
 
           if(enemy){
             const scale=Math.max(0.75,Math.min(1.5,w/900));
-            drawEnemy(ctx,w*0.72,h*0.78,scale,enemy);
+            drawEnemy(ctx,w*0.72,h*0.56,scale,enemy);
             ctx.font="bold 14px monospace";
             ctx.fillStyle="#111";
             ctx.fillText(enemy.name||"ENEMY",w*0.62,24);
