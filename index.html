@@ -1,75 +1,75 @@
-    <!doctype html>
-    <html lang="ja">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>境界TRPG Ultimate</title>
-    <link rel="stylesheet" href="style_battle_enhanced.css">
-    </head>
-    <body>
-    <div class="app">
-    <header><h1>境界TRPG</h1><p>Ultimate Standalone Edition</p></header>
-    <section id="status" class="panel status-panel"></section>
+        <!doctype html>
+        <html lang="ja">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <title>境界TRPG Ultimate</title>
+        <link rel="stylesheet" href="style.css">
+        </head>
+        <body>
+        <div class="app">
+        <header><h1>境界TRPG</h1><p>Ultimate Standalone Edition</p></header>
+        <section id="status" class="panel status-panel"></section>
 
-    <!-- 戦闘画面：HP/EHPゲージと白黒ドット絵アニメーション -->
-    <section class="battle-panel panel">
-      <canvas id="battle-canvas" aria-label="戦闘シーン"></canvas>
-    </section>
+        <!-- 戦闘画面：HP/EHPゲージと白黒ドット絵アニメーション -->
+        <section class="battle-panel panel">
+          <canvas id="battle-canvas" aria-label="戦闘シーン"></canvas>
+        </section>
 
-    <!-- ログ表示 -->
-    <section id="output" class="panel output"></section>
+        <!-- ログ表示 -->
+        <section id="output" class="panel output"></section>
 
-    <!-- コマンドパネル：以前より高さを抑え、戦闘画面の下に配置 -->
-    <section class="command-area">
-      <div id="suggestions" class="suggestions hidden"></div>
-      <form id="command-form">
-        <input id="command-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="/help">
-        <button type="submit">実行</button>
-      </form>
-      <small>「/」で候補　↑↓選択　Tab補完　Enter実行</small>
-    </section>
-    </div>
+        <!-- コマンドパネル：以前より高さを抑え、戦闘画面の下に配置 -->
+        <section class="command-area">
+          <div id="suggestions" class="suggestions hidden"></div>
+          <form id="command-form">
+            <input id="command-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="/help">
+            <button type="submit">実行</button>
+          </form>
+          <small>「/」で候補　↑↓選択　Tab補完　Enter実行</small>
+        </section>
+        </div>
 
-    <!-- Firebaseを追加：app.jsより前に置く -->
-    <script type="module">
-      import { initializeApp } from
-        "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+        <!-- Firebaseを追加：app.jsより前に置く -->
+        <script type="module">
+          import { initializeApp } from
+            "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-      import {
-        getDatabase,
-        ref,
-        set,
-        get,
-        update,
-        onValue,
-        remove
-      } from
-        "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+          import {
+            getDatabase,
+            ref,
+            set,
+            get,
+            update,
+            onValue,
+            remove
+          } from
+            "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyDuWTYGj8aeQvs1ulbhW1pxPmAJ195wTZg",
-        authDomain: "trpg-c798c.firebaseapp.com",
-        databaseURL: "https://trpg-c798c-default-rtdb.firebaseio.com",
-        projectId: "trpg-c798c",
-        storageBucket: "trpg-c798c.firebasestorage.app",
-        messagingSenderId: "395870734652",
-        appId: "1:395870734652:web:fd987c041ac037708e7639"
-      };
+          const firebaseConfig = {
+            apiKey: "AIzaSyDuWTYGj8aeQvs1ulbhW1pxPmAJ195wTZg",
+            authDomain: "trpg-c798c.firebaseapp.com",
+            databaseURL: "https://trpg-c798c-default-rtdb.firebaseio.com",
+            projectId: "trpg-c798c",
+            storageBucket: "trpg-c798c.firebasestorage.app",
+            messagingSenderId: "395870734652",
+            appId: "1:395870734652:web:fd987c041ac037708e7639"
+          };
 
-      const firebaseApp = initializeApp(firebaseConfig);
-      const database = getDatabase(firebaseApp);
+          const firebaseApp = initializeApp(firebaseConfig);
+          const database = getDatabase(firebaseApp);
 
-      window.firebaseDB = database;
-      window.firebaseRef = ref;
-      window.firebaseSet = set;
-      window.firebaseGet = get;
-      window.firebaseUpdate = update;
-      window.firebaseOnValue = onValue;
-      window.firebaseRemove = remove;
+          window.firebaseDB = database;
+          window.firebaseRef = ref;
+          window.firebaseSet = set;
+          window.firebaseGet = get;
+          window.firebaseUpdate = update;
+          window.firebaseOnValue = onValue;
+          window.firebaseRemove = remove;
 
-      const script = document.createElement("script");
-      script.src = "app.js";
-      document.body.appendChild(script);
-    </script>
-    </body>
-    </html>
+          const script = document.createElement("script");
+          script.src = "app.js";
+          document.body.appendChild(script);
+        </script>
+        </body>
+        </html>
