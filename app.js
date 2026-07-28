@@ -97,7 +97,7 @@ const BOSS_DATA={
   boss_07:{name:"終焉騎士アポカリプス",rank:7,hp:650000,attack:500,defense:3000,rewardLevel:7},
   boss_08:{name:"混沌神カオス・レギオン",rank:8,hp:800000,attack:600,defense:3000,rewardLevel:8},
   boss_09:{name:"万象破壊獣オメガ",rank:9,hp:999999,attack:900,defense:3000,rewardLevel:9},
-  boss_10:{name:"世界断絶神エンド・オブ・ワールド",rank:10,hp:1000000,attack:10000,defense:300,rewardLevel:10},
+  boss_10:{name:"世界断絶神エンド・オブ・ワールド",rank:10,hp:1000000,attack:5000,defense:10000,rewardLevel:10},
   sunshine_izake:{name:"サンシャインイ・ザーキ",hp:1500000,attack:1200,defense:10000,goldReward:150000,secret:"shine"},
   moon_senbei:{name:"月せんべい",hp:1000000,attack:1000,defense:50000,goldReward:1000000,secret:"がっちがちやで"},
   evolving_void_beast:{name:"進化する虚無獣",hp:500000,attack:12000,defense:300,goldReward:500000,evolving:true}
