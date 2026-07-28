@@ -21,12 +21,12 @@ const ENEMIES = {
   kraken:{name:"クラーケン",baseHp:3500,baseAttack:150,baseDefense:900,baseExp:4500,gold:5000,desc:"海を支配する怪物。"},
   void_beast:{name:"虚無獣",baseHp:6000,baseAttack:220,baseDefense:1300,baseExp:9000,gold:10000,desc:"世界の外側から来た怪物。"},
   kishi:{name:"方向の騎士",baseHp:10000,baseAttack:99999999,baseDefense:10000,baseExp:15000,gold:15000,desc:"こいつはどこから来たのだろうか．．．"},
-  funny:{name:"大草原不可避",baseHp:1000000000000000,baseAttack:1000,baseDefense:100000000000,baseExp:15000,gold:9999999999,desc:"こいつはたぶん...ネットから来たな"},
+  funny:{name:"大草原不可避",baseHp:100,baseAttack:1000,baseDefense:100000000000,baseExp:15000,gold:9999999999,desc:"こいつはたぶん...ネットから来たな"},
   cat:{
   name:"ルナティック猫",
   baseHp:100000000,
   baseAttack:10000,
-  baseDefense:1000000,
+  baseDefense:10000,
   baseExp:1000000,
   gold:1000000,
 
@@ -56,7 +56,7 @@ block:{
   name:"黒曜石の仮面",
   baseHp:666666666666,
   baseAttack:6666666,
-  baseDefense:6666666,
+  baseDefense:6666,
   baseExp:666666666,
   gold:666666666,
 
@@ -623,7 +623,7 @@ function getSpecialName(item){
 
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
-  function getSpecialDamage(item){
+  function getSpecialDamage(item, enemy){
 
   const str =
     Number(save.character?.str) || 0;
@@ -631,9 +631,12 @@ function getSpecialName(item){
   const damageRate =
     Number(item?.specialMagic?.damage) || 1;
 
+  const defense =
+    Number(enemy?.baseDefense) || 0;
+
   return Math.max(
     1,
-    Math.floor(str * damageRate)
+    Math.floor(str * damageRate) - defense
   );
 }
 
@@ -1250,7 +1253,7 @@ const mpCost=
   isSpecial &&
   weapon?.rarity==="SECRET"
 
-    ? getSpecialDamage(weapon)
+    ? getSpecialDamage(weapon, e)
 
     : isSpecial
 
