@@ -21,7 +21,7 @@ const ENEMIES = {
   kraken:{name:"クラーケン",baseHp:3500,baseAttack:150,baseDefense:900,baseExp:4500,gold:5000,desc:"海を支配する怪物。"},
   void_beast:{name:"虚無獣",baseHp:6000,baseAttack:220,baseDefense:1300,baseExp:9000,gold:10000,desc:"世界の外側から来た怪物。"},
   kishi:{name:"方向の騎士",baseHp:10000,baseAttack:99999999,baseDefense:10000,baseExp:15000,gold:15000,desc:"こいつはどこから来たのだろうか．．．"},
-  funny:{name:"大草原不可避",baseHp:20,baseAttack:1000,baseDefense:50000000000000,baseExp:15000,gold:9999999999,desc:"こいつはたぶん...ネットから来たな"},
+  funny:{name:"大草原不可避",baseHp:100,baseAttack:1000,baseDefense:100000000000,baseExp:15000,gold:9999999999,desc:"こいつはたぶん...ネットから来たな"},
   cat:{
   name:"ルナティック猫",
   baseHp:100000000,
@@ -1265,6 +1265,13 @@ const mpCost=
           +c.int
           -Math.floor(e.defense*.15)
         );
+    console.log({
+  enemy: e.name,
+  defense: e.defense,
+  str: c.str,
+  rate: weapon.specialMagic.damage,
+  damage: d
+});
   e.hp-=d;
   log(isSpecial?`✨ 必殺技「${specialName}」発動！ ${d}ダメージ！`:`${name}！ ${d}ダメージ。`,isSpecial?"success":"system");
   enemyAction(e,c);
