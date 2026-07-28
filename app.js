@@ -88,19 +88,19 @@ block:{
    ボス・裏ボス
 ========================================= */
 const BOSS_DATA={
-  boss_01:{name:"紅蓮の覇王ヴァルガス",rank:1,hp:90000,attack:200,defense:300,rewardLevel:1},
-  boss_02:{name:"深海王アビサル",rank:2,hp:110000,attack:200,defense:300,rewardLevel:2},
-  boss_03:{name:"天空要塞ゼファリオン",rank:3,hp:150000,attack:250,defense:300,rewardLevel:3},
-  boss_04:{name:"冥界公爵ネクロヴァ",rank:4,hp:200000,attack:300,defense:300,rewardLevel:4},
-  boss_05:{name:"星喰らいグラビオン",rank:5,hp:300000,attack:350,defense:300,rewardLevel:5},
-  boss_06:{name:"時空皇帝クロノゼロ",rank:6,hp:500000,attack:400,defense:300,rewardLevel:6},
-  boss_07:{name:"終焉騎士アポカリプス",rank:7,hp:650000,attack:500,defense:300,rewardLevel:7},
-  boss_08:{name:"混沌神カオス・レギオン",rank:8,hp:800000,attack:600,defense:300,rewardLevel:8},
-  boss_09:{name:"万象破壊獣オメガ",rank:9,hp:999999,attack:900,defense:300,rewardLevel:9},
-  boss_10:{name:"世界断絶神エンド・オブ・ワールド",rank:10,hp:1000000,attack:1000,defense:300,rewardLevel:10},
-  sunshine_izake:{name:"サンシャインイ・ザーキ",hp:1500000,attack:1200,defense:300,goldReward:150000,secret:"shine"},
-  moon_senbei:{name:"月せんべい",hp:1000000,attack:1000,defense:300,goldReward:1000000,secret:"がっちがちやで"},
-  evolving_void_beast:{name:"進化する虚無獣",hp:500000,attack:1200,defense:300,goldReward:500000,evolving:true}
+  boss_01:{name:"紅蓮の覇王ヴァルガス",rank:1,hp:90000,attack:200,defense:1000,rewardLevel:1},
+  boss_02:{name:"深海王アビサル",rank:2,hp:110000,attack:200,defense:3000,rewardLevel:2},
+  boss_03:{name:"天空要塞ゼファリオン",rank:3,hp:150000,attack:250,defense:3000,rewardLevel:3},
+  boss_04:{name:"冥界公爵ネクロヴァ",rank:4,hp:200000,attack:300,defense:3000,rewardLevel:4},
+  boss_05:{name:"星喰らいグラビオン",rank:5,hp:300000,attack:350,defense:3000,rewardLevel:5},
+  boss_06:{name:"時空皇帝クロノゼロ",rank:6,hp:500000,attack:400,defense:3000,rewardLevel:6},
+  boss_07:{name:"終焉騎士アポカリプス",rank:7,hp:650000,attack:500,defense:3000,rewardLevel:7},
+  boss_08:{name:"混沌神カオス・レギオン",rank:8,hp:800000,attack:600,defense:3000,rewardLevel:8},
+  boss_09:{name:"万象破壊獣オメガ",rank:9,hp:999999,attack:900,defense:3000,rewardLevel:9},
+  boss_10:{name:"世界断絶神エンド・オブ・ワールド",rank:10,hp:1000000,attack:10000,defense:300,rewardLevel:10},
+  sunshine_izake:{name:"サンシャインイ・ザーキ",hp:1500000,attack:1200,defense:10000,goldReward:150000,secret:"shine"},
+  moon_senbei:{name:"月せんべい",hp:1000000,attack:1000,defense:50000,goldReward:1000000,secret:"がっちがちやで"},
+  evolving_void_beast:{name:"進化する虚無獣",hp:500000,attack:12000,defense:300,goldReward:500000,evolving:true}
 };
 
 const COMMANDS=[
