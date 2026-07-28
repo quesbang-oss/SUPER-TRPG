@@ -1279,11 +1279,11 @@ const mpCost=
           +c.int
           -Math.floor(e.defense*.15)
         );
-    console.log({
+   console.log({
   enemy: e.name,
   defense: e.defense,
   str: c.str,
-  rate: weapon.specialMagic.damage,
+  rate: weapon?.specialMagic?.damage,
   damage: d
 });
   e.hp-=d;
