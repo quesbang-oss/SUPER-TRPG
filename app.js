@@ -623,7 +623,7 @@ function getSpecialName(item){
 
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
-  function getSpecialDamage(item, enemy){
+ function getSpecialDamage(item, enemy){
 
   const str =
     Number(save.character?.str) || 0;
@@ -631,12 +631,10 @@ function getSpecialName(item){
   const damageRate =
     Number(item?.specialMagic?.damage) || 1;
 
-  const defense =
-    Number(enemy?.baseDefense) || 0;
-
   return Math.max(
     1,
-    Math.floor(str * damageRate) - defense
+    Math.floor(str * damageRate)
+      - Math.floor(enemy.defense * 0.35)
   );
 }
 
