@@ -625,18 +625,18 @@ function getSpecialName(item){
 }
  function getSpecialDamage(item, enemy){
 
-  const normal = normalDamageAgainst(
-    enemy,
-    save.character,
-    getEquipmentBonus(item)
-  );
-
-  const damageRate =
-    Number(item?.specialMagic?.damage) || 1;
+  const str = save.character.str;
+  const weaponBonus = getEquipmentBonus(item);
+  const damageRate = Number(item?.specialMagic?.damage) || 1;
 
   return Math.max(
     1,
-    Math.floor(normal * damageRate)
+    Math.floor(
+      rand(8,18)
+      + str
+      + weaponBonus
+      - Math.floor(enemy.defense * 0.35)
+    ) * damageRate
   );
 }
 
