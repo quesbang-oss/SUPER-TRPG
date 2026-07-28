@@ -51,6 +51,41 @@ const ENEMIES = {
     stars:4,
     bonus:100
   }
+},
+block:{
+  name:"黒曜石の仮面",
+  baseHp:666666666666,
+  baseAttack:6666666,
+  baseDefense:6666666,
+  baseExp:666666666,
+  gold:666666666,
+
+  desc:"なんかそこら辺にあった人間をやめれそうな仮面",
+
+  // 行動順
+  // 1 = 通常攻撃
+  // 2 = 必殺
+  // 3 = 殺
+  actions:[1,2,1,2,1,3],
+
+  // 必殺技
+  skills:{
+    2:{
+      name:"俺は攻撃力をあげるぞ！プレイヤー！",
+      damageRate:5
+    }
+  },
+3:{
+      name:"俺はお前を倒す！プレイヤー！",
+      damageRate:100
+    }
+  },
+  guaranteedDrop:{
+    name:"謎の仮面",
+    type:"armor",
+    stars:5,
+    bonus:100
+  }
 }
 　
 };
