@@ -625,18 +625,20 @@ function getSpecialName(item){
 }
  function getSpecialDamage(item, enemy){
 
-  const str = save.character.str;
-  const weaponBonus = getEquipmentBonus(item);
-  const damageRate = Number(item?.specialMagic?.damage) || 1;
+  const atk =
+    rand(8,18)
+    + (Number(save.character?.str) || 0)
+    + getEquipmentBonus(item);
+
+  const damageRate =
+    Number(item?.specialMagic?.damage) || 1;
 
   return Math.max(
     1,
     Math.floor(
-      rand(8,18)
-      + str
-      + weaponBonus
-      - Math.floor(enemy.defense * 0.35)
-    ) * damageRate
+      (atk * damageRate) /
+      (1 + enemy.defense)
+    )
   );
 }
 
@@ -1202,7 +1204,19 @@ function bossSpecialTurn(e){
 }
 
 function normalDamageAgainst(e,c,weaponBonus=0){
-  return Math.max(1,rand(8,18)+c.str+weaponBonus-Math.floor(e.defense*.35));
+
+  const atk =
+    rand(8,18)
+    + c.str
+    + weaponBonus;
+
+  return Math.max(
+    1,
+    Math.floor(
+      atk * 1 /
+      (1 + e.defense)
+    )
+  );
 }
 
 function attack(){
