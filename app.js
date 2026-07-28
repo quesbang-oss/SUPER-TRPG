@@ -3,7 +3,7 @@
 
 /* 完全スタンドアロン：fetch不使用。敵データは直接内蔵。 */
 const STORAGE_KEY="border-trpg-ultimate-v2";
-const STAT_MAX=999999999;
+const STAT_MAX=999999999999;
 
 const ENEMIES = {
   slime:{name:"スライム",baseHp:30,baseAttack:5,baseDefense:1,baseExp:10,gold:5,desc:"ぷるぷるした魔物。"},
