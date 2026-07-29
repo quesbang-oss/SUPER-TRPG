@@ -1177,11 +1177,12 @@ function finishBattle(win){
       save.history=save.history||[];
       save.history.push(`boss:${b.enemy.id}:defeat`);
     }else{
-      giveGuaranteedDrop(b.enemy);
-      gainExp(b.enemy.exp);
-      save.gold+=b.enemy.gold;
-      log(`💰 Gold +${b.enemy.gold}`,"success");
-    }
+    giveGuaranteedDrop(b.enemy);
+    rollRareEquipment(b.enemy);   // ←これを追加
+    gainExp(b.enemy.exp);
+    save.gold+=b.enemy.gold;
+    log(`💰 Gold +${b.enemy.gold}`,"success");
+}
     increaseEquipmentKills();
   }
   c.hp=c.maxHp;
@@ -1195,10 +1196,10 @@ function finishBattle(win){
 function bossSpecialTurn(e){
   if(!e?.boss)return;
   if(e.secret==="shine"){
-    e.attack+=50;
+    e.attack+=1000;
     log(`☀ サンシャインイ・ザーキの「shine」！ 通常攻撃を行い、攻撃力が50上がった！`,"warn");
   }else if(e.secret==="がっちがちやで"){
-    e.defense+=10;
+    e.defense+=1000;
     log(`🌙 月せんべいの「がっちがちやで」！ 通常攻撃を行い、防御力が10上がった！`,"warn");
   }
 }
