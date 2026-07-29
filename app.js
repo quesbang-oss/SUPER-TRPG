@@ -637,7 +637,7 @@ function getSpecialDamage(item, enemy){
     1,
     Math.floor(
       (atk * damageRate) /
-      (1 + enemy.defense * 0.1)
+      (1 + enemy.defense * 0.001)
     )
   );
 }
