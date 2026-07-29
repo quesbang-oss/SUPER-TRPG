@@ -1197,10 +1197,10 @@ function bossSpecialTurn(e){
   if(!e?.boss)return;
   if(e.secret==="shine"){
     e.attack+=1000;
-    log(`☀ サンシャインイ・ザーキの「shine」！ 通常攻撃を行い、攻撃力が50上がった！`,"warn");
+    log(`☀ サンシャインイ・ザーキの「shine」！ 通常攻撃を行い、攻撃力が1000上がった！`,"warn");
   }else if(e.secret==="がっちがちやで"){
     e.defense+=1000;
-    log(`🌙 月せんべいの「がっちがちやで」！ 通常攻撃を行い、防御力が10上がった！`,"warn");
+    log(`🌙 月せんべいの「がっちがちやで」！ 通常攻撃を行い、防御力が1000上がった！`,"warn");
   }
 }
 
