@@ -3,7 +3,7 @@
 
 /* 完全スタンドアロン：fetch不使用。敵データは直接内蔵。 */
 const STORAGE_KEY="border-trpg-ultimate-v2";
-const STAT_MAX=999999999999;
+const STAT_MAX=99999999;
 
 const ENEMIES = {
   slime:{name:"スライム",baseHp:30,baseAttack:5,baseDefense:10,baseExp:10,gold:5,desc:"ぷるぷるした魔物。"},
@@ -623,7 +623,7 @@ function getSpecialName(item){
 
   return EQUIPMENT_SPECIALS[item.stars]||null;
 }
- function getSpecialDamage(item, enemy){
+function getSpecialDamage(item, enemy){
 
   const atk =
     rand(8,18)
@@ -637,7 +637,7 @@ function getSpecialName(item){
     1,
     Math.floor(
       (atk * damageRate) /
-      (1 + enemy.defense)
+      (1 + enemy.defense * 0.1)
     )
   );
 }
